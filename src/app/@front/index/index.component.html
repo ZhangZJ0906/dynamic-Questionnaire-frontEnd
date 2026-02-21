@@ -1,0 +1,123 @@
+<app-nav></app-nav>
+
+@if (test) {
+  <!-- 註冊 -->
+  <h1 class="text-center text-4xl mt-5">註冊</h1>
+
+  <div class="flex flex-col items-center justify-center mt-10">
+    <mat-card
+      class="w-96 p-6 flex flex-col items-center gap-4 shadow-lg !bg-red-500"
+    >
+      <img src="image/Sign up.gif" alt="" class="w-87" />
+      <form [formGroup]="form">
+        <mat-form-field class="w-full">
+          <mat-label>請輸入帳號</mat-label>
+          <input
+            matInput
+            placeholder="請輸入帳號"
+            formControlName="registerAccount"
+          />
+          @if (form.get("registerAccount")?.hasError("required")) {
+            <mat-error>此為必填</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field class="w-full">
+          <mat-label>請輸入信箱</mat-label>
+          <input
+            matInput
+            placeholder="請輸入信箱"
+            formControlName="registerEmail"
+          />
+          @if (form.get("registerEmail")?.hasError("required")) {
+            <mat-error>此為必填</mat-error>
+          }
+          @if (form.get("registerEmail")?.hasError("email")) {
+            <mat-error>信箱格式不正確</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field class="w-full">
+          <mat-label>請輸入密碼</mat-label>
+          <input matInput type="password" formControlName="registerPassword" />
+          @if (form.get("registerPassword")?.hasError("required")) {
+            <mat-error>此為必填</mat-error>
+          }
+          @if (form.get("registerPassword")?.hasError("pattern")) {
+            <mat-error>請至少輸入 8 位數字</mat-error>
+          }
+        </mat-form-field>
+        <div class="w-full flex flex-col gap-3 mt-2">
+          <button
+            mat-raised-button
+            color="primary"
+            class="w-full"
+            (click)="signUp()"
+          >
+            <mat-icon>person_add</mat-icon> 註冊
+          </button>
+          <button
+            mat-raised-button
+            color="primary"
+            class="w-full"
+            (click)="test = !test"
+          >
+            已有帳號?
+          </button>
+        </div>
+      </form>
+    </mat-card>
+  </div>
+} @else {
+  <!-- 登入 -->
+  <h1 class="text-center text-4xl mt-5">登入</h1>
+
+  <div class="flex flex-col items-center justify-center mt-20">
+    <mat-card
+      class="w-96 p-6 flex flex-col items-center gap-4 shadow-lg !bg-red-500"
+    >
+      <img src="image/welcome.gif" alt="" class="w-56" />
+      <form [formGroup]="form">
+        <mat-form-field class="w-full">
+          <mat-label>請輸入帳號</mat-label>
+          <input matInput placeholder="請輸入帳號" formControlName="account" />
+          @if (form.get("account")?.hasError("required")) {
+            <mat-error>此為必填</mat-error>
+          }
+        </mat-form-field>
+
+        <mat-form-field class="w-full">
+          <mat-label>請輸入密碼</mat-label>
+          <input matInput type="password" formControlName="password" />
+          @if (form.get("password")?.hasError("required")) {
+            <mat-error>此為必填</mat-error>
+          }
+          @if (form.get("password")?.hasError("pattern")) {
+            <mat-error>請至少輸入 8 位數字</mat-error>
+          }
+        </mat-form-field>
+        <div class="w-full flex flex-col gap-3 mt-2">
+          <!-- 主要動作：登入 -->
+          <button
+            mat-raised-button
+            color="primary"
+            class="w-full"
+            (click)="check()"
+          >
+            <mat-icon>login</mat-icon> 登入
+          </button>
+
+          <!-- 次要動作：前往註冊，用 stroked 視覺上較輕 -->
+          <button
+            mat-raised-button
+            color="primary"
+            class="w-full"
+            (click)="test = !test"
+          >
+            還沒有帳號？前往註冊
+          </button>
+        </div>
+      </form>
+    </mat-card>
+  </div>
+}

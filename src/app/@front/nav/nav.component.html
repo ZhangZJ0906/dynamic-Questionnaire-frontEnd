@@ -1,0 +1,45 @@
+<mat-toolbar color="primary" class="flex flex-wrap md:flex-nowrap items-center">
+  <!-- 漢堡選單：手機顯示，md 以上隱藏 -->
+  <button
+    mat-icon-button
+    class="block md:hidden mr-2"
+    (click)="menuOpen = !menuOpen"
+    aria-label="Toggle menu"
+  >
+    <mat-icon>menu</mat-icon>
+  </button>
+
+  <!-- 標題 -->
+  <a routerLink="/"> <span class="title text-lg font-semibold">My App</span></a>
+
+  <!-- 空間撐開 -->
+  <span class="spacer flex-1"></span>
+
+  <!-- 導覽按鈕：桌面顯示，手機隱藏 -->
+  <div class="hidden md:flex space-x-4">
+    <button mat-button routerLink="/showAll">Home</button>
+    <!-- <button mat-button routerLink="/about">About</button>
+    <button mat-button routerLink="/services">Services</button>
+    <button mat-button routerLink="/contact">Contact</button> -->
+  </div>
+</mat-toolbar>
+
+@if (menuOpen) {
+
+<div class="flex flex-col space-y-2 p-2 bg-primary md:hidden">
+  <button mat-button routerLink="/showAll" (click)="menuOpen = false">Home</button>
+  <!-- <button mat-button routerLink="/about" (click)="menuOpen = false">
+    About
+  </button>
+  <button mat-button routerLink="/services" (click)="menuOpen = false">
+    Services
+  </button>
+  <button mat-button routerLink="/contact" (click)="menuOpen = false">
+    Contact
+  </button> -->
+</div>
+
+}
+
+<!-- 手機下拉選單：只在手機顯示 -->
+
