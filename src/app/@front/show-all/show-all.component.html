@@ -1,29 +1,65 @@
 <app-nav></app-nav>
 
+<mat-form-field class="w-full">
+  <mat-label>請輸入關鍵字</mat-label>
+  <input
+    matInput
+    type="text"
+    name="search"
+    id="search"
+    [(ngModel)]="inputData"
+    (keyup)="searchTable($event)"
+  />
+</mat-form-field>
+
 <div class="mat-elevation-z8">
-  <table mat-table [dataSource]="dataSource">
-    <!-- Position Column -->
-    <ng-container matColumnDef="position">
+  <table mat-table matSort [dataSource]="dataSource">
+    <!-- ID Column -->
+    <ng-container matColumnDef="id">
       <th mat-header-cell *matHeaderCellDef>No.</th>
-      <td mat-cell *matCellDef="let element">{{ element.position }}</td>
+      <td mat-cell *matCellDef="let element">{{ element.id }}</td>
     </ng-container>
 
-    <!-- Name Column -->
-    <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef>Name</th>
-      <td mat-cell *matCellDef="let element">{{ element.name }}</td>
+    <!-- 問卷名稱 Column -->
+    <ng-container matColumnDef="title">
+      <th mat-header-cell *matHeaderCellDef>問卷名稱</th>
+      <td mat-cell *matCellDef="let element">{{ element.title }}</td>
     </ng-container>
 
-    <!-- Weight Column -->
-    <ng-container matColumnDef="weight">
-      <th mat-header-cell *matHeaderCellDef>Weight</th>
-      <td mat-cell *matCellDef="let element">{{ element.weight }}</td>
+    <!-- 分類 Column -->
+    <ng-container matColumnDef="category">
+      <th mat-header-cell *matHeaderCellDef>分類</th>
+      <td mat-cell *matCellDef="let element">{{ element.category }}</td>
     </ng-container>
 
-    <!-- Symbol Column -->
-    <ng-container matColumnDef="symbol">
-      <th mat-header-cell *matHeaderCellDef>Symbol</th>
-      <td mat-cell *matCellDef="let element">{{ element.symbol }}</td>
+    <!-- 題目數 Column -->
+    <ng-container matColumnDef="questionCount">
+      <th mat-header-cell *matHeaderCellDef>題目數</th>
+      <td mat-cell *matCellDef="let element">{{ element.questionCount }}</td>
+    </ng-container>
+
+    <!-- 開始日期 -->
+    <ng-container matColumnDef="startDate">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>開始日期</th>
+      <td mat-cell *matCellDef="let element">{{ element.startDate }}</td>
+    </ng-container>
+
+    <!-- 結束日期 -->
+    <ng-container matColumnDef="endDate">
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>結束日期</th>
+      <td mat-cell *matCellDef="let element">{{ element.endDate }}</td>
+    </ng-container>
+
+    <!-- 狀態 Column -->
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>狀態</th>
+      <td mat-cell *matCellDef="let element">{{ element.status }}</td>
+    </ng-container>
+
+    <!-- 回覆數 Column -->
+    <ng-container matColumnDef="responseCount">
+      <th mat-header-cell *matHeaderCellDef>回覆數</th>
+      <td mat-cell *matCellDef="let element">{{ element.responseCount }}</td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>

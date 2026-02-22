@@ -1,0 +1,31 @@
+<div class="flex items-center h-16 px-4 bg-blue-600 text-white shadow-md">
+  <button (click)="drawer.toggle()" class="p-2 rounded-md hover:bg-blue-700 transition-colors">
+    <mat-icon>menu</mat-icon>
+  </button>
+  <span class="ml-4 text-lg font-semibold">My App</span>
+</div>
+
+<mat-drawer-container class="h-[calc(100vh-64px)]" autosize>
+
+  <mat-drawer #drawer class="w-64 p-4 shadow-lg" mode="over">
+    <p class="text-lg font-medium mb-4">側邊選單</p>
+
+    @if (showFiller) {
+      <p class="text-sm text-gray-500 mb-4">Lorem, ipsum dolor sit amet consectetur.</p>
+    }
+
+    <button
+      (click)="showFiller = !showFiller"
+      mat-raised-button
+      class="w-full"
+    >
+      Toggle extra text
+    </button>
+  </mat-drawer>
+
+  <!-- Main Content -->
+  <div class="p-6">
+    <ng-content></ng-content>
+  </div>
+
+</mat-drawer-container>

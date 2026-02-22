@@ -5,12 +5,14 @@ import { ShowAllComponent } from './@front/show-all/show-all.component';
 export const routes: Routes = [
   {
     path: '',
-    component: IndexComponent,
+    loadChildren: () =>
+      import('./@front/front.routes').then((m) => m.frontRoutes),
   },
 
   //後續要加入由首位
   {
-    path: 'showAll',
-    component: ShowAllComponent,
+    path: 'admin',
+    loadChildren: () =>
+      import('./@backend/backend.routes').then((m) => m.backendRoutes),
   },
 ];
