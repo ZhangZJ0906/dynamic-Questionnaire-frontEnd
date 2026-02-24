@@ -1,5 +1,5 @@
 import { NavComponent } from '../nav/nav.component';
-import { AfterViewInit, Component, ViewChild } from '@angular/core';
+import {  Component, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';

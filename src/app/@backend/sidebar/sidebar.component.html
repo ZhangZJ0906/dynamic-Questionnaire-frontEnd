@@ -1,31 +1,32 @@
 <div class="flex items-center h-16 px-4 bg-blue-600 text-white shadow-md">
-  <button (click)="drawer.toggle()" class="p-2 rounded-md hover:bg-blue-700 transition-colors">
+  <button
+    (click)="drawer.toggle()"
+    class="p-2 rounded-md hover:bg-blue-700 transition-colors"
+  >
     <mat-icon>menu</mat-icon>
   </button>
   <span class="ml-4 text-lg font-semibold">My App</span>
 </div>
 
 <mat-drawer-container class="h-[calc(100vh-64px)]" autosize>
-
   <mat-drawer #drawer class="w-64 p-4 shadow-lg" mode="over">
-    <p class="text-lg font-medium mb-4">側邊選單</p>
+    <p class="text-lg font-medium mb-4">動態選單</p>
 
-    @if (showFiller) {
-      <p class="text-sm text-gray-500 mb-4">Lorem, ipsum dolor sit amet consectetur.</p>
+    <!-- 左邊的side bar 內容 -->
+    @for (link of linkArr; track link.id) {
+      <button
+        mat-raised-button
+        class="w-full mt-5"
+        routerLink="{{ link.route }}"
+      >
+      <mat-icon>{{link.icon}}</mat-icon>
+        {{ link.name }}
+      </button>
     }
-
-    <button
-      (click)="showFiller = !showFiller"
-      mat-raised-button
-      class="w-full"
-    >
-      Toggle extra text
-    </button>
   </mat-drawer>
 
-  <!-- Main Content -->
+  <!-- 右邊 -->
   <div class="p-6">
     <ng-content></ng-content>
   </div>
-
 </mat-drawer-container>
