@@ -28,7 +28,7 @@ export class SidebarComponent {
     },
     {
       id: 2,
-      name: '會員',
+      name: '問卷',
       route: 'user',
       icon:'account_circle'
     },

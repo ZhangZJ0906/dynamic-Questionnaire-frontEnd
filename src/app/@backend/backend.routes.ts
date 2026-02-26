@@ -13,11 +13,11 @@ export const backendRoutes: Routes = [
         (m) => m.DashboardComponent,
       ),
   },
-  //   {
-  //   path: 'new',
-  //   loadComponent: () =>
-  //     import('./new/new.component').then(
-  //       (m) => m.NewComponent,
-  //     ),
-  // },
+    {
+    path: 'dialog',
+    loadComponent: () =>
+      import('./dialog/dialog.component').then(
+        (m) => m.DialogComponent,
+      ),
+  },
 ];

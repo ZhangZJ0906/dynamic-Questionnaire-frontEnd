@@ -1,3 +1,4 @@
+import { DialogComponent } from './../dialog/dialog.component';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 
 import { Component, ViewChild } from '@angular/core';
@@ -7,7 +8,9 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSort, MatSortModule } from '@angular/material/sort';
-
+import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
+import { MatDialog } from '@angular/material/dialog';
 export interface Survey {
   id: number;
   title: string;
@@ -28,13 +31,17 @@ export interface Survey {
     MatInputModule,
     MatFormFieldModule,
     MatSortModule,
+    MatButton,
+    MatIcon,
+    DialogComponent,
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
 })
 export class DashboardComponent {
   inputData: string = '';
-  showDialog: boolean = false; //show 彈跳視窗
+  constructor(private dialog: MatDialog) {}
+
   displayedColumns: string[] = [
     'id',
     'title',
@@ -73,8 +80,11 @@ export class DashboardComponent {
 
   //show 彈跳視窗並新增問卷以及reload
   showNew() {
-    this.showDialog = !this.showDialog;
-    
+    this.dialog.open(DialogComponent, {
+      width: '560px',
+      height:'560px',
+      disableClose:false
+    });
   }
 }
 const SURVEY_DATA: Survey[] = [
