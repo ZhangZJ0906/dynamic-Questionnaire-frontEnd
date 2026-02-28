@@ -7,7 +7,7 @@ export const frontRoutes: Routes = [
       import('./index/index.component').then((m) => m.IndexComponent),
   },
 
-  //後續要加入由首位
+  //TODO後續要加入由首位
   {
     path: 'showAll',
         loadComponent: () =>

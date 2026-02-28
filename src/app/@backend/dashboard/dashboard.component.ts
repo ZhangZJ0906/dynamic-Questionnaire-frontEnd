@@ -51,6 +51,7 @@ export class DashboardComponent {
     'endDate',
     'status',
     'responseCount',
+    'actions',
   ];
   dataSource = new MatTableDataSource<Survey>(SURVEY_DATA);
 
@@ -78,12 +79,12 @@ export class DashboardComponent {
     this.dataSource.filter = keyWord;
   }
 
-  //show 彈跳視窗並新增問卷以及reload
+  // TODO show 彈跳視窗並新增問卷以及reload
   showNew() {
     this.dialog.open(DialogComponent, {
       width: '560px',
-      height:'560px',
-      disableClose:false
+      height: '560px',
+      disableClose: false,
     });
   }
 }
@@ -127,29 +128,8 @@ const SURVEY_DATA: Survey[] = [
     endDate: '2024-04-15',
     status: '進行中',
     responseCount: 32,
-  },
-  {
+  },  {
     id: 5,
-    title: '教育訓練成效評估',
-    category: '人資',
-    questionCount: 12,
-    startDate: '2024-04-01',
-    endDate: '2024-04-30',
-    status: '草稿',
-    responseCount: 0,
-  },
-  {
-    id: 6,
-    title: '年度品牌認知度調查',
-    category: '行銷',
-    questionCount: 18,
-    startDate: '2024-04-10',
-    endDate: '2024-05-10',
-    status: '草稿',
-    responseCount: 0,
-  },
-  {
-    id: 7,
     title: '辦公環境改善意見調查',
     category: '行政',
     questionCount: 9,
@@ -159,7 +139,7 @@ const SURVEY_DATA: Survey[] = [
     responseCount: 214,
   },
   {
-    id: 8,
+    id: 6,
     title: '主管領導力360度評鑑',
     category: '人資',
     questionCount: 25,
@@ -169,7 +149,7 @@ const SURVEY_DATA: Survey[] = [
     responseCount: 76,
   },
   {
-    id: 9,
+    id: 7,
     title: '市場競品分析問卷',
     category: '行銷',
     questionCount: 14,
@@ -179,7 +159,7 @@ const SURVEY_DATA: Survey[] = [
     responseCount: 59,
   },
   {
-    id: 10,
+    id: 8,
     title: '系統操作易用性調查',
     category: '資訊',
     questionCount: 11,

@@ -1,11 +1,13 @@
 import { NavComponent } from '../nav/nav.component';
-import {  Component, ViewChild } from '@angular/core';
+import { Component, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
-import { MatSort,MatSortModule } from '@angular/material/sort';
+import { MatSort, MatSortModule } from '@angular/material/sort';
+import { MatButton } from '@angular/material/button';
+
 
 export interface Survey {
   id: number;
@@ -27,6 +29,7 @@ export interface Survey {
     MatInputModule,
     MatFormFieldModule,
     MatSortModule,
+    MatButton
   ],
   templateUrl: './show-all.component.html',
   styleUrl: './show-all.component.scss',
@@ -41,7 +44,7 @@ export class ShowAllComponent {
     'startDate',
     'endDate',
     'status',
-    'responseCount',
+    'actions'
   ];
   dataSource = new MatTableDataSource<Survey>(SURVEY_DATA);
 
@@ -113,28 +116,9 @@ const SURVEY_DATA: Survey[] = [
     status: '進行中',
     responseCount: 32,
   },
+
   {
     id: 5,
-    title: '教育訓練成效評估',
-    category: '人資',
-    questionCount: 12,
-    startDate: '2024-04-01',
-    endDate: '2024-04-30',
-    status: '草稿',
-    responseCount: 0,
-  },
-  {
-    id: 6,
-    title: '年度品牌認知度調查',
-    category: '行銷',
-    questionCount: 18,
-    startDate: '2024-04-10',
-    endDate: '2024-05-10',
-    status: '草稿',
-    responseCount: 0,
-  },
-  {
-    id: 7,
     title: '辦公環境改善意見調查',
     category: '行政',
     questionCount: 9,
@@ -144,7 +128,7 @@ const SURVEY_DATA: Survey[] = [
     responseCount: 214,
   },
   {
-    id: 8,
+    id: 6,
     title: '主管領導力360度評鑑',
     category: '人資',
     questionCount: 25,
@@ -154,7 +138,7 @@ const SURVEY_DATA: Survey[] = [
     responseCount: 76,
   },
   {
-    id: 9,
+    id: 7,
     title: '市場競品分析問卷',
     category: '行銷',
     questionCount: 14,
@@ -164,7 +148,7 @@ const SURVEY_DATA: Survey[] = [
     responseCount: 59,
   },
   {
-    id: 10,
+    id: 8,
     title: '系統操作易用性調查',
     category: '資訊',
     questionCount: 11,
