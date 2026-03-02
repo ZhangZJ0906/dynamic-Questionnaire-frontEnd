@@ -7,6 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatButton } from '@angular/material/button';
+import { MatIcon } from '@angular/material/icon';
 
 
 export interface Survey {
@@ -16,7 +17,7 @@ export interface Survey {
   questionCount: number;
   startDate: string;
   endDate: string;
-  status: '進行中' | '已結束' | '草稿';
+  status: '進行中' | '已結束' ;
   responseCount: number;
 }
 @Component({
@@ -29,7 +30,8 @@ export interface Survey {
     MatInputModule,
     MatFormFieldModule,
     MatSortModule,
-    MatButton
+    MatButton,
+    MatIcon,
   ],
   templateUrl: './show-all.component.html',
   styleUrl: './show-all.component.scss',
@@ -44,7 +46,7 @@ export class ShowAllComponent {
     'startDate',
     'endDate',
     'status',
-    'actions'
+    'actions',
   ];
   dataSource = new MatTableDataSource<Survey>(SURVEY_DATA);
 

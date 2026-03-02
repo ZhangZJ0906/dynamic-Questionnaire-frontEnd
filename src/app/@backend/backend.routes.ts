@@ -13,11 +13,5 @@ export const backendRoutes: Routes = [
         (m) => m.DashboardComponent,
       ),
   },
-    {
-    path: 'dialog',
-    loadComponent: () =>
-      import('./dialog/dialog.component').then(
-        (m) => m.DialogComponent,
-      ),
-  },
+    
 ];

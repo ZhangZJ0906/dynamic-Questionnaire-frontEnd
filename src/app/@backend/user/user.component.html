@@ -1,44 +1,37 @@
 <app-sidebar>
-  <h1
-    class="font-bold tracking-wide text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-10"
-  >
+  <h1 class="font-bold tracking-wide text-2xl sm:text-3xl md:text-4xl lg:text-5xl mb-10">
     歡迎回來
     <span class="ml-2 text-blue-200">XXX</span>
   </h1>
-  <div
-    class="grid gap-4 [grid-template-columns:repeat(auto-fill,minmax(300px,1fr))]"
-  >
+  <div class="grid gap-4 [grid-template-columns:repeat(auto-fill,minmax(300px,1fr))]">
     @for (item of userArr; track $index) {
-      <mat-card
-        appearance="outlined"
-        class="!rounded-2xl hover:shadow-lg transition-shadow duration-300 overflow-hidden"
-      >
-        <mat-card-header class="!pt-5 !px-5">
-          <mat-card-title class="!text-lg !font-bold text-gray-800">
-            {{ item.name }}
-          </mat-card-title>
-        </mat-card-header>
+    <mat-card appearance="outlined" class="!rounded-2xl hover:shadow-lg transition-shadow duration-300 overflow-hidden">
+      <mat-card-header class="!pt-5 !px-5">
+        <mat-card-title class="!text-lg !font-bold text-gray-800">
+          {{ item.name }}
+        </mat-card-title>
+      </mat-card-header>
 
-        <mat-card-content class="!px-5 !pb-5 !pt-3">
-          <!-- 出席人數 -->
-          <div class="flex items-center gap-3 mb-3">
-            <div
-              class="flex flex-col items-center justify-center w-16 h-16 rounded-xl bg-blue-50 border border-blue-100"
-            >
-              <span class="text-3xl font-extrabold text-blue-600 leading-none">
-                {{ item.attendance }}
-              </span>
-            </div>
-
-            <!-- 內容描述 -->
-            <p
-              class="flex-1 text-sm text-gray-500 leading-relaxed line-clamp-3"
-            >
-              {{ item.content }}
-            </p>
+      <mat-card-content class="!px-5 !pb-5 !pt-3">
+        <!-- 出席人數 -->
+        <div class="flex items-center gap-3 mb-3">
+          <div class="flex flex-col items-center justify-center w-16 h-16 rounded-xl bg-blue-50 border border-blue-100">
+            <span class="text-3xl font-extrabold text-blue-600 leading-none">
+              {{ item.attendance }}
+            </span>
           </div>
-        </mat-card-content>
-      </mat-card>
+
+          <!-- 內容描述 -->
+          <p class="flex-1 text-sm text-gray-500 leading-relaxed line-clamp-3">
+            {{ item.content }}
+          </p>
+        </div>
+      </mat-card-content>
+    </mat-card>
     }
+  </div>
+
+  <div class="grid justify-items-end mt-32 ">
+    <img src="image/Admin.gif" alt="" class="w-64 h-auto">
   </div>
 </app-sidebar>
