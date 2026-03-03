@@ -14,7 +14,7 @@ import { MatDialog } from '@angular/material/dialog';
 export interface Survey {
   id: number;
   title: string;
-  category: string;
+
   questionCount: number;
   startDate: string;
   endDate: string;
@@ -45,7 +45,7 @@ export class DashboardComponent {
   displayedColumns: string[] = [
     'id',
     'title',
-    'category',
+
     'questionCount',
     'startDate',
     'endDate',
@@ -92,7 +92,7 @@ const SURVEY_DATA: Survey[] = [
   {
     id: 1,
     title: '2024 員工滿意度調查',
-    category: '人資',
+
     questionCount: 20,
     startDate: '2024-01-01',
     endDate: '2024-01-31',
@@ -102,7 +102,7 @@ const SURVEY_DATA: Survey[] = [
   {
     id: 2,
     title: '產品使用體驗問卷',
-    category: '產品',
+
     questionCount: 15,
     startDate: '2024-02-01',
     endDate: '2024-02-28',
@@ -112,7 +112,6 @@ const SURVEY_DATA: Survey[] = [
   {
     id: 3,
     title: '客戶服務品質調查',
-    category: '客服',
     questionCount: 10,
     startDate: '2024-03-01',
     endDate: '2024-03-31',
@@ -122,16 +121,15 @@ const SURVEY_DATA: Survey[] = [
   {
     id: 4,
     title: '新功能需求蒐集',
-    category: '產品',
     questionCount: 8,
     startDate: '2024-03-15',
     endDate: '2024-04-15',
     status: '進行中',
     responseCount: 32,
-  },  {
+  },
+  {
     id: 5,
     title: '辦公環境改善意見調查',
-    category: '行政',
     questionCount: 9,
     startDate: '2024-01-15',
     endDate: '2024-02-15',
@@ -141,7 +139,6 @@ const SURVEY_DATA: Survey[] = [
   {
     id: 6,
     title: '主管領導力360度評鑑',
-    category: '人資',
     questionCount: 25,
     startDate: '2024-02-20',
     endDate: '2024-03-20',
@@ -151,7 +148,6 @@ const SURVEY_DATA: Survey[] = [
   {
     id: 7,
     title: '市場競品分析問卷',
-    category: '行銷',
     questionCount: 14,
     startDate: '2024-03-20',
     endDate: '2024-04-20',
@@ -161,7 +157,6 @@ const SURVEY_DATA: Survey[] = [
   {
     id: 8,
     title: '系統操作易用性調查',
-    category: '資訊',
     questionCount: 11,
     startDate: '2024-03-25',
     endDate: '2024-04-25',

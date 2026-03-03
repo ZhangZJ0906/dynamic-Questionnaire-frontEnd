@@ -1,16 +1,12 @@
-<mat-toolbar color="primary" class="flex flex-wrap md:flex-nowrap items-center">
+<mat-toolbar  class="flex flex-wrap md:flex-nowrap items-center bg-indigo-600 text-white shadow-md">
+  
   <!-- 漢堡選單：手機顯示，md 以上隱藏 -->
-  <button
-    mat-icon-button
-    class="block md:hidden mr-2"
-    (click)="menuOpen = !menuOpen"
-    aria-label="Toggle menu"
-  >
+  <button mat-icon-button class="block md:hidden mr-2" (click)="menuOpen = !menuOpen" aria-label="Toggle menu">
     <mat-icon>menu</mat-icon>
   </button>
 
   <!-- 標題 -->
-  <a routerLink="/showAll"> <span class="title text-lg font-semibold">動態問卷</span></a>
+  <span class="title text-lg font-semibold">動態問卷</span>
 
   <!-- 空間撐開 -->
   <span class="spacer flex-1"></span>
@@ -42,4 +38,3 @@
 }
 
 <!-- 手機下拉選單：只在手機顯示 -->
-

@@ -1,7 +1,7 @@
 <app-nav></app-nav>
 
 
-<div class="w-2/3  mx-auto ">
+<div class="w-2/3  mx-auto mt-3 ">
 
   <mat-form-field class="w-full">
     <mat-label>請輸入關鍵字</mat-label>
@@ -22,11 +22,7 @@
         <td mat-cell *matCellDef="let element">{{ element.title }}</td>
       </ng-container>
 
-      <!-- 分類 Column -->
-      <ng-container matColumnDef="category">
-        <th mat-header-cell *matHeaderCellDef>分類</th>
-        <td mat-cell *matCellDef="let element">{{ element.category }}</td>
-      </ng-container>
+
 
       <!-- 題目數 Column -->
       <ng-container matColumnDef="questionCount">
@@ -60,7 +56,7 @@
           @case ("進行中") {
 
           <!-- TODO 這邊應該會先判斷是否填過 再去判斷要顯示哪個button -->
-          <button mat-stroked-button color="primary" class="whitespace-nowrap text-xs md:text-sm">查看結果</button>
+          <button mat-stroked-button color="primary" class="whitespace-nowrap text-xs md:text-sm" routerLink="/showquestion">填表單</button>
 
           }
           @case ("已結束") {

@@ -10,7 +10,12 @@ export const frontRoutes: Routes = [
   //TODO後續要加入由首位
   {
     path: 'showAll',
-        loadComponent: () =>
+    loadComponent: () =>
       import('./show-all/show-all.component').then((m) => m.ShowAllComponent),
+  },
+  {
+    path: 'showquestion',
+    loadComponent: () =>
+      import('./show-question/show-question.component').then((m) => m.ShowQuestionComponent),
   },
 ];

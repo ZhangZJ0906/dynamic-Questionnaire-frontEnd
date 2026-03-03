@@ -10,48 +10,27 @@
     <!-- 標題 -->
     <mat-form-field class="w-full">
       <mat-label>標題</mat-label>
-      <input
-        matInput
-        type="text"
-        id="title"
-        name="title"
-        placeholder="請輸入問卷標題"
-      />
+      <input matInput type="text" id="title" name="title" placeholder="請輸入問卷標題" />
     </mat-form-field>
 
     <!-- 說明 -->
     <mat-form-field class="w-full">
       <mat-label>說明</mat-label>
-      <input
-        matInput
-        id="content"
-        name="content"
-        placeholder="請輸入問卷說明（選填）"
-      />
+      <input matInput id="content" name="content" placeholder="請輸入問卷說明（選填）" />
     </mat-form-field>
 
     <!-- 日期並排 -->
     <div class="flex gap-3">
       <mat-form-field class="flex-1">
         <mat-label>開始日期</mat-label>
-        <input
-          matInput
-          [matDatepicker]="startPicker"
-          id="startDate"
-          name="startDate"
-        />
+        <input matInput [matDatepicker]="startPicker" id="startDate" name="startDate" />
         <mat-datepicker-toggle matIconSuffix [for]="startPicker" />
         <mat-datepicker #startPicker />
       </mat-form-field>
 
       <mat-form-field class="flex-1">
         <mat-label>結束日期</mat-label>
-        <input
-          matInput
-          [matDatepicker]="endPicker"
-          id="endDate"
-          name="endDate"
-        />
+        <input matInput [matDatepicker]="endPicker" id="endDate" name="endDate" />
         <mat-datepicker-toggle matIconSuffix [for]="endPicker" />
         <mat-datepicker #endPicker />
       </mat-form-field>
@@ -68,19 +47,64 @@
     </div>
 
     <!-- 題目空白提示 -->
+    @if(question.length>0){
+    @for (q of question; track $index; let qIdx = $index) {
+    <div class="flex flex-col gap-4 border border-gray-200 rounded-2xl p-5 mb-4 bg-gray-50/30">
+
+      <div class="flex justify-between items-center">
+        <span class="text-xs font-bold text-indigo-500">題目 {{ qIdx + 1 }}</span>
+        <button mat-icon-button color="warn" (click)="removeQuestion(qIdx)">
+          <mat-icon>delete_outline</mat-icon>
+        </button>
+      </div>
+
+      <mat-form-field class="w-full">
+        <mat-label>題目名稱</mat-label>
+        <input matInput [(ngModel)]="q.label" name="label-{{qIdx}}" placeholder="例如：您的姓名或滿意度？" />
+      </mat-form-field>
+
+      <mat-form-field class="w-full">
+        <mat-label>題型</mat-label>
+        <mat-select [(ngModel)]="q.questionType" name="type-{{qIdx}}" (selectionChange)="onTypeChange(q)">
+          <mat-option value="text">填空題</mat-option>
+          <mat-option value="radio">單選題</mat-option>
+          <mat-option value="checkbox">多選題</mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      @if (q.questionType !== 'text') {
+      <div class="flex flex-col gap-2 pl-4 border-l-2 border-indigo-100">
+        <p class="text-xs font-bold text-gray-400 uppercase">選項設定</p>
+
+        @for (opt of q.option; track $index; let optIdx = $index) {
+        <div class="flex items-center gap-2">
+          <mat-form-field class="flex-1 !pb-0">
+            <input matInput [(ngModel)]="q.option![optIdx]" name="opt-{{qIdx}}-{{optIdx}}" placeholder="選項內容" />
+          </mat-form-field>
+          <button mat-icon-button (click)="removeOption(q, optIdx)" [disabled]="q.option!.length <= 1">
+            <mat-icon class="!text-sm">close</mat-icon>
+          </button>
+        </div>
+        }
+
+        <button mat-button type="button" (click)="addOption(q)" class="!text-indigo-500 self-start">
+          <mat-icon>add</mat-icon> 新增選項
+        </button>
+      </div>
+      }
+    </div>
+    }
+    }@else {
     <div
-      class="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-gray-200 rounded-2xl py-10 text-gray-400"
-    >
+      class="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-gray-200 rounded-2xl py-10 text-gray-400">
       <mat-icon class="!text-4xl !w-10 !h-10 text-gray-300">quiz</mat-icon>
       <p class="text-sm">尚未新增任何題目</p>
     </div>
+    }
 
     <!-- 新增題目按鈕 -->
-    <button
-      mat-stroked-button
-      type="button"
-      class="w-full !rounded-xl !border-dashed !border-indigo-300 !text-indigo-500 hover:!bg-indigo-50"
-    >
+    <button mat-stroked-button type="button" (click)="addQuestion()"
+      class="w-full !rounded-xl !border-dashed !border-indigo-300 !text-indigo-500 hover:!bg-indigo-50">
       <mat-icon>add</mat-icon>
       新增題目
     </button>
