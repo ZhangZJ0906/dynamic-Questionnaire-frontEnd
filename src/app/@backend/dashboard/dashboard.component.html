@@ -1,19 +1,10 @@
 <app-sidebar>
   <h1 class="text-3xl mb-10">問卷集合區</h1>
 
-  <div
-    class="flex flex-col sm:flex-row gap-3 sm:items-end bg-white p-4 rounded-xl shadow"
-  >
+  <div class="flex flex-col sm:flex-row gap-3 sm:items-end bg-white p-4 rounded-xl shadow">
     <mat-form-field class="w-60">
       <mat-label>請輸入關鍵字</mat-label>
-      <input
-        matInput
-        type="text"
-        name="search"
-        id="search"
-        [(ngModel)]="inputData"
-        (keyup)="searchTable($event)"
-      />
+      <input matInput type="text" name="search" id="search" [(ngModel)]="inputData" (keyup)="searchTable($event)" />
     </mat-form-field>
 
     <button (click)="showNew()" mat-flat-button>
@@ -55,12 +46,7 @@
 
       <!-- 開始日期 -->
       <ng-container matColumnDef="startDate">
-        <th
-          mat-header-cell
-          *matHeaderCellDef
-          mat-sort-header
-          class="whitespace-nowrap"
-        >
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="whitespace-nowrap">
           開始日期
         </th>
         <td mat-cell *matCellDef="let element" class="whitespace-nowrap">
@@ -70,12 +56,7 @@
 
       <!-- 結束日期 -->
       <ng-container matColumnDef="endDate">
-        <th
-          mat-header-cell
-          *matHeaderCellDef
-          mat-sort-header
-          class="whitespace-nowrap"
-        >
+        <th mat-header-cell *matHeaderCellDef mat-sort-header class="whitespace-nowrap">
           結束日期
         </th>
         <td mat-cell *matCellDef="let element" class="whitespace-nowrap">
@@ -105,17 +86,22 @@
 
       <!-- 動作button -->
       <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef>操作</th>
+        <th mat-header-cell *matHeaderCellDef class="whitespace-nowrap">操作</th>
         <td mat-cell *matCellDef="let element">
-          @switch (element.status) {
+          <div class="flex items-center gap-2 whitespace-nowrap py-2">
+            @switch (element.status) {
             @case ("進行中") {
-              <button mat-stroked-button color="primary" class="mr-5">查看結果</button>
-              <button mat-flat-button color="warn">結束問卷</button>
+            <button mat-stroked-button color="primary" (click)="checkResult(element)">查看結果</button>
+            
             }
             @case ("已結束") {
-              <button mat-flat-button color="primary">查看結果</button>
+            <button mat-flat-button color="primary" (click)="checkResult(element)">查看結果</button>
             }
-          }
+            }
+            <button mat-flat-button color="accent" (click)="removequestionnaire(element)">
+              刪除
+            </button>
+          </div>
         </td>
       </ng-container>
 
@@ -123,11 +109,7 @@
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
 
-    <mat-paginator
-      [pageSizeOptions]="[5, 10, 20]"
-      showFirstLastButtons
-      aria-label="Select page of periodic elements"
-    >
+    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Select page of periodic elements">
     </mat-paginator>
   </div>
 </app-sidebar>

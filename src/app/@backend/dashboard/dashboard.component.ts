@@ -2,6 +2,7 @@ import { DialogComponent } from './../dialog/dialog.component';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 
 import { Component, ViewChild } from '@angular/core';
+import Swal from 'sweetalert2';
 import { FormsModule } from '@angular/forms';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -11,6 +12,7 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
+import { Router } from '@angular/router';
 export interface Survey {
   id: number;
   title: string;
@@ -40,12 +42,14 @@ export interface Survey {
 })
 export class DashboardComponent {
   inputData: string = '';
-  constructor(private dialog: MatDialog) {}
+  constructor(
+    private dialog: MatDialog,
+    private route: Router,
+  ) {}
 
   displayedColumns: string[] = [
     'id',
     'title',
-
     'questionCount',
     'startDate',
     'endDate',
@@ -79,12 +83,42 @@ export class DashboardComponent {
     this.dataSource.filter = keyWord;
   }
 
-  // TODO show 彈跳視窗並新增問卷以及reload
+  // TODO call api 新增問卷以及reload
   showNew() {
     this.dialog.open(DialogComponent, {
       width: '560px',
       height: '560px',
       disableClose: false,
+    });
+  }
+  checkResult(element: any) {
+    const id = element.id;
+    console.log(id)
+    return this.route.navigate(['admin','question', 'chart', id]);
+  }
+  removequestionnaire(element: any) {
+    const id = element.id;
+    const title = element.title;
+    Swal.fire({
+      title: '確定要刪除嗎？',
+      text: `問卷「${element.title}」刪除後將無法恢復！`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: '是的，刪除！',
+      cancelButtonText: '再想想',
+      confirmButtonColor: '#d33', // 刪除通常用紅色
+      reverseButtons: true,
+    }).then((res) => {
+      //TODO call API 刪除問卷
+      this.delSuccess(title);
+    });
+  }
+
+  delSuccess(title: string) {
+    Swal.fire({
+      title: '成功',
+      text: `成功刪除「${title}」`,
+      icon: 'success',
     });
   }
 }

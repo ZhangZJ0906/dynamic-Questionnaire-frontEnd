@@ -1,4 +1,4 @@
-<app-nav></app-nav>
+<!-- <app-nav></app-nav> -->
 
 @if (test) {
   <!-- 註冊 -->
@@ -18,10 +18,16 @@
             formControlName="registerAccount"
           />
           @if (form.get("registerAccount")?.hasError("required")) {
-            <mat-error>此為必填</mat-error>
+            <mat-error >此為必填</mat-error>
           }
         </mat-form-field>
-
+        <mat-form-field class="w-full">
+          <mat-label>請輸入名稱</mat-label>
+          <input matInput placeholder="請輸入名稱" formControlName="registertitle" />
+          @if (form.get("registertitle")?.hasError("required")) {
+          <mat-error>此為必填</mat-error>
+          }
+        </mat-form-field>
         <mat-form-field class="w-full">
           <mat-label>請輸入信箱</mat-label>
           <input
@@ -72,7 +78,7 @@
   <!-- 登入 -->
   <h1 class="text-center text-4xl mt-5">登入</h1>
 
-  <div class="flex flex-col items-center justify-center mt-20">
+  <div class="flex flex-col items-center justify-center mt-15">
     <mat-card
       class="w-96 p-6 flex flex-col items-center gap-4 shadow-lg !bg-red-500"
     >
@@ -90,7 +96,7 @@
           <mat-label>請輸入密碼</mat-label>
           <input matInput type="password" formControlName="password" />
           @if (form.get("password")?.hasError("required")) {
-            <mat-error>此為必填</mat-error>
+            <mat-error class=" ">此為必填</mat-error>
           }
           @if (form.get("password")?.hasError("pattern")) {
             <mat-error>請至少輸入 8 位數字</mat-error>

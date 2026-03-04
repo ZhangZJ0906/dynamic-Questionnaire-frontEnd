@@ -1,5 +1,12 @@
 import { NavComponent } from '../nav/nav.component';
-import { Component, ViewChild } from '@angular/core';
+import {
+  Component,
+  ViewChild,
+  ChangeDetectionStrategy,
+  inject,
+  model,
+  signal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -8,12 +15,22 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { RouterLink } from "@angular/router";
+import { RouterLink } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogActions,
+  MatDialogClose,
+  MatDialogContent,
+  MatDialogRef,
+  MatDialogTitle,
+} from '@angular/material/dialog';
+import { DialogComponent } from '../dialog/dialog.component';
 
 export interface Survey {
   id: number;
   title: string;
-
   questionCount: number;
   startDate: string;
   endDate: string;
@@ -32,8 +49,8 @@ export interface Survey {
     MatSortModule,
     MatButton,
     MatIcon,
-    RouterLink
-],
+    RouterLink,
+  ],
   templateUrl: './show-all.component.html',
   styleUrl: './show-all.component.scss',
 })
@@ -42,7 +59,6 @@ export class ShowAllComponent {
   displayedColumns: string[] = [
     'id',
     'title',
-
     'questionCount',
     'startDate',
     'endDate',
@@ -50,7 +66,7 @@ export class ShowAllComponent {
     'actions',
   ];
   dataSource = new MatTableDataSource<Survey>(SURVEY_DATA);
-
+  constructor(private dialog: MatDialog) {}
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
@@ -76,7 +92,17 @@ export class ShowAllComponent {
     let keyWord = this.inputData;
     this.dataSource.filter = keyWord;
   }
-  ngOnInit(): void {}
+
+  //dialog
+  openDialog(element: any): void {
+    const id = element.id;
+    const dialogRef = this.dialog.open(DialogComponent, {
+      width: '560px',
+      height: '560px',
+      disableClose: false,
+    });
+    
+  }
 }
 const SURVEY_DATA: Survey[] = [
   {

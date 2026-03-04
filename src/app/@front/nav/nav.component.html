@@ -14,6 +14,8 @@
   <!-- 導覽按鈕：桌面顯示，手機隱藏 -->
   <div class="hidden md:flex space-x-4">
     <button mat-button routerLink="/showAll">Home</button>
+    <button mat-button (click)="logout()"><mat-icon>logout</mat-icon> Logout</button>
+
     <!-- <button mat-button routerLink="/about">About</button>
     <button mat-button routerLink="/services">Services</button>
     <button mat-button routerLink="/contact">Contact</button> -->

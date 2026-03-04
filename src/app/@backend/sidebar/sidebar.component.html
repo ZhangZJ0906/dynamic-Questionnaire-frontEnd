@@ -1,28 +1,26 @@
 <div class="flex items-center h-16 px-4 bg-blue-600 text-white shadow-md">
-  <button
-    (click)="drawer.toggle()"
-    class="p-2 rounded-md hover:bg-blue-700 transition-colors"
-  >
+  <button (click)="drawer.toggle()" class="p-2 rounded-md hover:bg-blue-700 transition-colors">
     <mat-icon>menu</mat-icon>
   </button>
-  <span class="ml-4 text-lg font-semibold">My App</span>
+  <span class="ml-4 text-lg font-semibold">動態問卷</span>
 </div>
 
 <mat-drawer-container class="h-[calc(100vh-64px)]" autosize>
   <mat-drawer #drawer class="w-64 p-4 shadow-lg" mode="over">
-    <p class="text-lg font-medium mb-4">動態選單</p>
+
 
     <!-- 左邊的side bar 內容 -->
     @for (link of linkArr; track link.id) {
-      <button
-        mat-raised-button
-        class="w-full mt-5"
-        routerLink="{{ link.route }}"
-      >
+    <button mat-raised-button class="w-full mt-5" routerLink="{{ link.route }}">
       <mat-icon>{{link.icon}}</mat-icon>
-        {{ link.name }}
-      </button>
+      {{ link.name }}
+    </button>
     }
+    <button mat-raised-button class="w-full mt-5" (click)="logout()">
+      <mat-icon>logout</mat-icon>
+      登出
+    </button>
+
   </mat-drawer>
 
   <!-- 右邊 -->

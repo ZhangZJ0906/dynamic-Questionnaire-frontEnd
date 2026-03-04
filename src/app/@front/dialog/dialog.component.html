@@ -1,0 +1,101 @@
+<div mat-dialog-title class="flex items-center justify-between !border-b !pb-4">
+  <div class="flex items-center gap-2">
+    <mat-icon class="text-primary-600">assignment_turned_in</mat-icon>
+    <span class="!text-xl !font-bold text-gray-800">問卷填答回顧</span>
+  </div>
+
+</div>
+
+<mat-dialog-content class="!pt-6 !px-8">
+  <div class="mb-8 p-4 bg-green-50 border border-green-200 rounded-xl flex items-start gap-3">
+    <mat-icon class="text-green-600">info</mat-icon>
+    <div>
+      <p class="text-sm font-bold text-green-800">您已於 2024-03-01 完成提交</p>
+      <p class="text-xs text-green-700/80">此內容目前為唯讀狀態，無法修改。</p>
+    </div>
+  </div>
+
+  <section class="space-y-4">
+    <div class="flex items-center gap-2 mb-2">
+      <div class="w-1 h-4 bg-primary-500 rounded-full"></div>
+      <p class="text-sm font-bold tracking-wider text-gray-500 uppercase">基本資料</p>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
+      <mat-form-field  class="w-full col-span-2">
+        <mat-label>問卷名稱</mat-label>
+        <input matInput [value]="'2024 員工滿意度調查'" readonly />
+        <mat-icon matSuffix class="opacity-50">title</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field  class="w-full col-span-2">
+        <mat-label>說明內容</mat-label>
+        <textarea matInput rows="2" readonly>感謝您參與本次調查，您的寶貴意見將作為公司改善環境的重要參考。</textarea>
+      </mat-form-field>
+
+      <mat-form-field  class="w-full">
+        <mat-label>開始日期</mat-label>
+        <input matInput [value]="'2024-01-01'" readonly />
+        <mat-icon matSuffix class="opacity-50">calendar_today</mat-icon>
+      </mat-form-field>
+
+      <mat-form-field  class="w-full">
+        <mat-label>結束日期</mat-label>
+        <input matInput [value]="'2024-01-31'" readonly />
+        <mat-icon matSuffix class="opacity-50">event_busy</mat-icon>
+      </mat-form-field>
+    </div>
+  </section>
+
+  <mat-divider class="!my-8" />
+
+  <section class="space-y-6 pb-6">
+    <div class="flex items-center justify-between mb-4">
+      <div class="flex items-center gap-2">
+        <div class="w-1 h-4 bg-primary-500 rounded-full"></div>
+        <p class="text-sm font-bold tracking-wider text-gray-500 uppercase">我的回答內容</p>
+      </div>
+      <span class="px-3 py-1 bg-gray-100 text-gray-500 text-xs rounded-full font-medium">共 3 題</span>
+    </div>
+
+    <div class="space-y-6">
+      <div class="bg-gray-50 p-5 rounded-2xl border border-gray-100">
+        <div class="flex items-start gap-3">
+          <span
+            class="flex-none w-6 h-6 bg-white border border-gray-200 text-gray-500 text-xs flex items-center justify-center rounded-lg font-bold">1</span>
+          <div class="space-y-3 w-full">
+            <p class="text-gray-800 font-medium">您對目前的工作環境滿意嗎？</p>
+            <div class="grid grid-cols-1 gap-2">
+              <div class="flex items-center gap-2 p-2 bg-primary-50 border border-primary-200 rounded-lg">
+                <mat-icon class="text-primary-600 !text-sm w-4 h-4">check_circle</mat-icon>
+                <span class="text-sm text-primary-900 font-medium">非常滿意 (我的選擇)</span>
+              </div>
+              <div class="flex items-center gap-2 p-2 bg-white border border-gray-100 rounded-lg opacity-50">
+                <div class="w-4 h-4 border border-gray-300 rounded-full"></div>
+                <span class="text-sm text-gray-500">普通</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bg-gray-50 p-5 rounded-2xl border border-gray-100">
+        <div class="flex items-start gap-3">
+          <span
+            class="flex-none w-6 h-6 bg-white border border-gray-200 text-gray-500 text-xs flex items-center justify-center rounded-lg font-bold">2</span>
+          <div class="space-y-3 w-full">
+            <p class="text-gray-800 font-medium">其他具體建議</p>
+            <div class="p-3 bg-white border border-gray-200 rounded-lg text-sm text-gray-700 italic">
+              「希望下午茶時間可以多一點水果選項，謝謝！」
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end" class="!px-8 !pb-8">
+  <button mat-button (click)="onNoClick()" class="!px-6">返回列表</button>
+
+</mat-dialog-actions>

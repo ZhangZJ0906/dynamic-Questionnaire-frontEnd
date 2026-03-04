@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import Swal from 'sweetalert2';
+
 import { NavComponent } from '../nav/nav.component';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -14,6 +16,7 @@ import {
   ReactiveFormsModule,
   FormGroup,
 } from '@angular/forms';
+import { AuthService } from '../../@services/auth.service';
 
 @Component({
   selector: 'app-index',
@@ -41,6 +44,7 @@ export class IndexComponent {
       Validators.required,
       Validators.pattern(/^\d{8,}$/),
     ]),
+    registertitle: new FormControl('', [Validators.required]),
     account: new FormControl('', [Validators.required]),
     password: new FormControl('', [
       Validators.required,
@@ -48,16 +52,21 @@ export class IndexComponent {
     ]),
   });
   test: boolean = false; //判斷是否為登入或註冊
-  constructor(private router: Router) {}
+  constructor(private router: Router,private auth:AuthService) {}
 
   //註冊
   signUp() {
     const registerPassword = this.form.get('registerPassword')?.value;
     const registerEmail = this.form.get('registerEmail')?.value;
-
     const registerAccount = this.form.get('registerAccount')?.value;
-    console.log(registerAccount, registerEmail, registerPassword);
-    // this.router.navigate(['/']);
+    const registerTitle = this.form.get('registertitle')?.value;
+    console.log(
+      registerAccount,
+      registerEmail,
+      registerPassword,
+      registerTitle,
+    );
+    this.form.reset();
     alert('註冊成功');
 
     this.test = !this.test;
@@ -69,12 +78,13 @@ export class IndexComponent {
     console.log(account, password);
 
     if (account == '123' && password == '12345678') {
-      // console.log(this.account, this.password);
-      // alert('對');
-      this.router.navigate(['/showAll']);
-    } else {
-      // console.log(this.account, this.password);
+      // 呼叫 API (此處模擬成功)
+      const mockToken = 'abc-123-token';
+      this.auth.login(mockToken);
 
+      Swal.fire('登入成功', '歡迎回來', 'success');
+      // this.router.navigate(['/showAll']);
+    } else {
       alert('錯');
       this.router.navigate(['/']);
     }
