@@ -1,0 +1,50 @@
+<h2 mat-dialog-title>
+  問卷預覽
+</h2>
+
+<mat-dialog-content class="space-y-5">
+
+  <!-- 說明 -->
+  <p class="text-gray-500 text-sm">
+    請確認以下填寫內容是否正確
+  </p>
+
+  <mat-divider></mat-divider>
+
+  <!-- 題目卡片 -->
+  <mat-card appearance="outlined" class="rounded-xl">
+    <mat-card-header>
+      <mat-card-title class="text-base font-semibold">
+        <!-- {{ title }} -->
+          假資料
+      </mat-card-title>
+
+      <mat-card-subtitle>
+        <!-- {{ context }} -->
+          假自廖
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content class="pt-3">
+      <div class="bg-gray-50 rounded-lg p-3 text-gray-800">
+        <!-- {{ answer || '（尚未填寫）' }} -->
+
+        假資料
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+</mat-dialog-content>
+
+
+<mat-dialog-actions align="end" class="gap-2 pt-4">
+
+  <button mat-button mat-dialog-close (click)="onCancel()">
+    繼續修改
+  </button>
+
+  <button mat-flat-button color="primary" (click)="submit()">
+    確認送出
+  </button>
+
+</mat-dialog-actions>

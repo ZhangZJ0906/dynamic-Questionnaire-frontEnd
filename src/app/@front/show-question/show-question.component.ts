@@ -1,4 +1,10 @@
-import { Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  inject,
+  model,
+  signal,
+} from '@angular/core';
 import { NavComponent } from '../nav/nav.component';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -13,9 +19,18 @@ import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatCardModule } from '@angular/material/card';
 
-export interface questions{
-  
-}
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogActions,
+  MatDialogClose,
+  MatDialogContent,
+  MatDialogRef,
+  MatDialogTitle,
+} from '@angular/material/dialog';
+import { ShowPreviewComponent } from '../show-preview/show-preview.component';
+
+export interface questions {}
 @Component({
   selector: 'app-show-question',
   imports: [
@@ -36,4 +51,15 @@ export interface questions{
   templateUrl: './show-question.component.html',
   styleUrl: './show-question.component.scss',
 })
-export class ShowQuestionComponent {}
+export class ShowQuestionComponent {
+  constructor(private matdialog: MatDialog) {}
+
+  //TODO 秀出答案 
+  preview(/*data:any*/) {
+    this.matdialog.open(ShowPreviewComponent, {
+      width: '560px',
+      height:'560px'
+      //data:data
+    });
+  }
+}
