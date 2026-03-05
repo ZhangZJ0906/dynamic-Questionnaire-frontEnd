@@ -1,13 +1,13 @@
 <app-sidebar>
   <h1 class="text-3xl mb-10">問卷集合區</h1>
 
-  <div class="flex flex-col sm:flex-row gap-3 sm:items-end bg-white p-4 rounded-xl shadow">
+  <div class="flex flex-col sm:flex-row gap-3 sm:items-center bg-white p-4 rounded-xl shadow">
     <mat-form-field class="w-60">
       <mat-label>請輸入關鍵字</mat-label>
       <input matInput type="text" name="search" id="search" [(ngModel)]="inputData" (keyup)="searchTable($event)" />
     </mat-form-field>
 
-    <button (click)="showNew()" mat-flat-button>
+    <button class="item-ceter" (click)="showNew()" mat-flat-button>
       <mat-icon>add</mat-icon>新增問卷
     </button>
   </div>
