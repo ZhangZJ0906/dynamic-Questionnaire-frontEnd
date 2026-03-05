@@ -5,6 +5,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
+import { provideNativeDateAdapter } from '@angular/material/core';
+
 import {
   MAT_DIALOG_DATA,
   MatDialog,
@@ -39,6 +41,8 @@ import { MatOption } from '@angular/material/core';
     MatNativeDateModule,
     MatOption,
   ],
+  providers: [provideNativeDateAdapter()],
+
   templateUrl: './dialog.component.html',
   styleUrl: './dialog.component.scss',
 })
