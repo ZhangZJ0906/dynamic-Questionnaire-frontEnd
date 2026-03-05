@@ -1,5 +1,5 @@
-<mat-toolbar  class="flex flex-wrap md:flex-nowrap items-center bg-indigo-600 text-white shadow-md">
-  
+<mat-toolbar class="flex flex-wrap md:flex-nowrap items-center bg-indigo-600 text-white shadow-md">
+
   <!-- 漢堡選單：手機顯示，md 以上隱藏 -->
   <button mat-icon-button class="block md:hidden mr-2" (click)="menuOpen = !menuOpen" aria-label="Toggle menu">
     <mat-icon>menu</mat-icon>
@@ -26,6 +26,7 @@
 
 <div class="flex flex-col space-y-2 p-2 bg-primary md:hidden">
   <button mat-button routerLink="/showAll" (click)="menuOpen = false">Home</button>
+  <button mat-button (click)="logout()"><mat-icon>logout</mat-icon> Logout</button>
   <!-- <button mat-button routerLink="/about" (click)="menuOpen = false">
     About
   </button>
