@@ -52,7 +52,10 @@ export class IndexComponent {
     ]),
   });
   test: boolean = false; //判斷是否為登入或註冊
-  constructor(private router: Router,private auth:AuthService) {}
+  constructor(
+    private router: Router,
+    private auth: AuthService,
+  ) {}
 
   //註冊
   signUp() {
@@ -66,10 +69,24 @@ export class IndexComponent {
       registerPassword,
       registerTitle,
     );
-    this.form.reset();
-    alert('註冊成功');
 
-    this.test = !this.test;
+    if (
+      registerAccount == '' ||
+      registerEmail == '' ||
+      registerPassword == '' ||
+      registerTitle == ''
+    ) {
+      Swal.fire({
+        title: '填寫資料',
+        text: '填寫資料',
+        icon: 'error',
+      });
+    } else {
+      this.form.reset();
+      alert('註冊成功');
+
+      this.test = !this.test;
+    }
   }
   //登入
   check() {
