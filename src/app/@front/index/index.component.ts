@@ -71,10 +71,10 @@ export class IndexComponent {
     );
 
     if (
-      registerAccount == '' ||
-      registerEmail == '' ||
-      registerPassword == '' ||
-      registerTitle == ''
+      !registerAccount ||
+      !registerEmail ||
+      !registerPassword ||
+      !registerTitle
     ) {
       Swal.fire({
         title: '填寫資料',
