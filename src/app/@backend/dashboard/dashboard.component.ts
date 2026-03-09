@@ -13,6 +13,7 @@ import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 export interface Survey {
   id: number;
   title: string;
@@ -36,12 +37,15 @@ export interface Survey {
     MatButton,
     MatIcon,
     DialogComponent,
+    MatDatepickerModule,
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.scss',
 })
 export class DashboardComponent {
   inputData: string = '';
+  startDate: Date | null = null; // 新增：開始日期變數
+  endDate: Date | null = null; // 新增：結束日期變
   constructor(
     private dialog: MatDialog,
     private route: Router,
@@ -76,11 +80,44 @@ export class DashboardComponent {
           return (item as any)[property];
       }
     };
+
+    // 自定義篩選邏輯
+    this.dataSource.filterPredicate = (data: Survey, filter: string) => {
+      // 1. 關鍵字篩選 (原本的邏輯)
+      const matchesSearch = data.title
+        .toLowerCase()
+        .includes(this.inputData.toLowerCase());
+
+      // 2. 日期區間篩選
+      const date = new Date(data.startDate); // 以資料的開始日期作為判斷基準
+      let matchesDate = true;
+
+      if (this.startDate && this.endDate) {
+        matchesDate = date >= this.startDate && date <= this.endDate;
+      } else if (this.startDate) {
+        matchesDate = date >= this.startDate;
+      } else if (this.endDate) {
+        matchesDate = date <= this.endDate;
+      }
+
+      return matchesSearch && matchesDate;
+    };
+  }
+
+  applyFilter() {
+    // 必須給 filter 一個值（隨便什麼字串）來觸發 filterPredicate
+    this.dataSource.filter = '' + Math.random();
   }
 
   searchTable(event: Event) {
-    let keyWord = this.inputData;
-    this.dataSource.filter = keyWord;
+    this.applyFilter();
+  }
+
+  resetFilters() {
+    this.inputData = '';
+    this.startDate = null;
+    this.endDate = null;
+    this.applyFilter();
   }
 
   // TODO call api 新增問卷以及reload
@@ -93,8 +130,8 @@ export class DashboardComponent {
   }
   checkResult(element: any) {
     const id = element.id;
-    console.log(id)
-    return this.route.navigate(['admin','question', 'chart', id]);
+    console.log(id);
+    return this.route.navigate(['admin', 'question', 'chart', id]);
   }
   removequestionnaire(element: any) {
     const id = element.id;

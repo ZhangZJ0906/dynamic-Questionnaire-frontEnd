@@ -6,10 +6,27 @@
       <mat-label>請輸入關鍵字</mat-label>
       <input matInput type="text" name="search" id="search" [(ngModel)]="inputData" (keyup)="searchTable($event)" />
     </mat-form-field>
+    <mat-form-field class="w-50">
+      <mat-label>開始日期</mat-label>
+      <input matInput [matDatepicker]="startPicker" [(ngModel)]="startDate" (dateChange)="applyFilter()">
+      <mat-datepicker-toggle matIconSuffix [for]="startPicker"></mat-datepicker-toggle>
+      <mat-datepicker #startPicker></mat-datepicker>
+    </mat-form-field>
+    ~
+    <mat-form-field class="w-50">
+      <mat-label>結束日期</mat-label>
+      <input matInput [matDatepicker]="endPicker" [(ngModel)]="endDate" (dateChange)="applyFilter()">
+      <mat-datepicker-toggle matIconSuffix [for]="endPicker"></mat-datepicker-toggle>
+      <mat-datepicker #endPicker></mat-datepicker>
+    </mat-form-field>
+    <button mat-stroked-button color="warn" class="h-[56px] px-6 whitespace-nowrap" (click)="resetFilters()">
+      <mat-icon>refresh</mat-icon> reset
+    </button>
 
     <button class="item-ceter" (click)="showNew()" mat-flat-button>
       <mat-icon>add</mat-icon>新增問卷
     </button>
+
   </div>
 
   <div class="mat-elevation-z8 w-full overflow-x-auto">
@@ -92,7 +109,7 @@
             @switch (element.status) {
             @case ("進行中") {
             <button mat-stroked-button color="primary" (click)="checkResult(element)">查看結果</button>
-            
+
             }
             @case ("已結束") {
             <button mat-flat-button color="primary" (click)="checkResult(element)">查看結果</button>
