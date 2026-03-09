@@ -53,6 +53,9 @@
 
       <div class="flex justify-between items-center">
         <span class="text-xs font-bold text-indigo-500">題目 {{ qIdx + 1 }}</span>
+        @if(q.required) {
+        <span class="text-red-500 text-2xl">*</span>
+        }
         <button mat-icon-button color="warn" (click)="removeQuestion(qIdx)">
           <mat-icon>delete_outline</mat-icon>
         </button>
@@ -62,6 +65,20 @@
         <mat-label>題目名稱</mat-label>
         <input matInput [(ngModel)]="q.label" name="label-{{qIdx}}" placeholder="例如：您的姓名或滿意度？" />
       </mat-form-field>
+
+
+      <div class="flex items-center justify-between mb-4 px-1">
+        <div class="flex items-center gap-2">
+          <mat-slide-toggle [(ngModel)]="q.required" name="required-{{qIdx}}" color="primary">
+            <span class="text-sm font-medium text-gray-600">此題必填</span>
+          </mat-slide-toggle>
+        </div>
+
+        @if(q.required) {
+        <span class="text-[10px] bg-red-50 text-red-500 px-2 py-0.5 rounded-full border border-red-100">REQUIRED</span>
+        }
+      </div>
+
 
       <mat-form-field class="w-full">
         <mat-label>題型</mat-label>

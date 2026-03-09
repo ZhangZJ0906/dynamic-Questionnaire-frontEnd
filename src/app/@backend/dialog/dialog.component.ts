@@ -6,7 +6,7 @@ import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { provideNativeDateAdapter } from '@angular/material/core';
-
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import {
   MAT_DIALOG_DATA,
   MatDialog,
@@ -40,6 +40,7 @@ import { MatOption } from '@angular/material/core';
     MatDatepickerModule,
     MatNativeDateModule,
     MatOption,
+    MatSlideToggleModule,
   ],
   providers: [provideNativeDateAdapter()],
 
