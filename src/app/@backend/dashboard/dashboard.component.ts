@@ -127,6 +127,8 @@ export class DashboardComponent {
       height: '560px',
       disableClose: false,
     });
+
+    
   }
   checkResult(element: any) {
     const id = element.id;

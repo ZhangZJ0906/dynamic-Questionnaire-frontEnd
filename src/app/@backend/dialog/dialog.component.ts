@@ -68,6 +68,11 @@ export class DialogComponent {
 
   // 2. 當題型切換時的處理
   onTypeChange(q: Question) {
+    if (q.questionType === 'checkbox') {
+      q.value = []; // 多選
+    } else {
+      q.value = ''; // 單選 / text
+    }
     // 如果切換到選擇題且目前沒選項，自動加一個預設選項
     if (q.questionType !== 'text' && (!q.option || q.option.length === 0)) {
       q.option = ['選項 1'];
@@ -88,5 +93,20 @@ export class DialogComponent {
   // 5. 輔助方法：刪除題目
   removeQuestion(index: number) {
     this.question.splice(index, 1);
+  }
+
+  saveQuestion() {
+    localStorage.setItem('questions', JSON.stringify(this.question));
+
+    // const data = localStorage.getItem('questions');
+    // const questions = data ? JSON.parse(data) : [];
+    console.log('原始資料:', this.question);
+
+    const json = JSON.stringify(this.question);
+    console.log('轉成 JSON:', json);
+
+    localStorage.setItem('questions', json);
+    // 關閉 dialog 並回傳資料
+    this.dialogRef.close(this.question);
   }
 }
