@@ -1,4 +1,4 @@
-import { Question } from './../../@interfaces/question';
+import { Question, Quiz, QuizRequest } from './../../@interfaces/question';
 import { Component, Output, EventEmitter } from '@angular/core';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -22,6 +22,7 @@ import { MatInput } from '@angular/material/input';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatOption } from '@angular/material/core';
+import { HttpClientService } from '../../@services/httpClient.service';
 @Component({
   selector: 'app-dialog',
   imports: [
@@ -48,8 +49,18 @@ import { MatOption } from '@angular/material/core';
   styleUrl: './dialog.component.scss',
 })
 export class DialogComponent {
-  constructor(private dialogRef: MatDialogRef<DialogComponent>) {}
+  constructor(private dialogRef: MatDialogRef<DialogComponent>
+    ,private http:HttpClientService
+  ) {}
+  // quiz:
   question: Question[] = [];
+  basicInfo: Quiz= {
+  title: '',
+  description: '',
+  startDate: '',
+  endDate: '',
+
+};;
   onclose() {
     this.dialogRef.close();
   }
@@ -96,16 +107,19 @@ export class DialogComponent {
   }
 
   saveQuestion() {
-    localStorage.setItem('questions', JSON.stringify(this.question));
+    const payload: QuizRequest = {
+      title: this.basicInfo.title,
+      description: this.basicInfo.description ?? '',
+      startDate: this.basicInfo.startDate ?? '',
+      endDate: this.basicInfo.endDate ?? '',
+      published: false,
+    };
+
 
     // const data = localStorage.getItem('questions');
-    // const questions = data ? JSON.parse(data) : [];
-    console.log('原始資料:', this.question);
+    // const questions = data ? JSON.parse(data) : []
+    // this.http.postApi();
 
-    const json = JSON.stringify(this.question);
-    console.log('轉成 JSON:', json);
-
-    localStorage.setItem('questions', json);
     // 關閉 dialog 並回傳資料
     this.dialogRef.close(this.question);
   }

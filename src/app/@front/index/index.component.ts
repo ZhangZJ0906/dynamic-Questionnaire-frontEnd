@@ -50,12 +50,13 @@ export class IndexComponent {
     email: new FormControl('', [Validators.required, Validators.email]),
   });
   test: boolean = false; //判斷是否為登入或註冊
+  // basic_URL = 'http://localhost:8080/user/';
+
   constructor(
     private router: Router,
     private auth: AuthService,
     private http: HttpClientService,
   ) {}
-  basic_URL = 'http://localhost:8080/user/';
   //註冊
   signUp() {
     if (this.registerForm.invalid) {
@@ -73,7 +74,7 @@ export class IndexComponent {
       age: this.registerForm.get('registerAge')?.value,
     };
 
-    this.http.postApi(this.basic_URL + 'register', postData).subscribe({
+    this.http.postApi(this.http.basicUrl + 'user/register', postData).subscribe({
       next: (res) => {
         Swal.fire({
           title: '註冊成功',
@@ -106,9 +107,10 @@ export class IndexComponent {
 
 
     this.http
-      .getApi(this.basic_URL + `login?email=${this.loginForm.get('email')?.value}`)
+      .getApi(this.http.basicUrl + `user/login?email=${this.loginForm.get('email')?.value}`)
       .subscribe({
         next: (res) => {
+          console.log(res);
           Swal.fire({
             title: '登入成功',
             icon: 'success',

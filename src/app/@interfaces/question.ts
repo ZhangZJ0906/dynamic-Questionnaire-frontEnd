@@ -1,6 +1,4 @@
 export interface Question {
-  createdAt?: string;
-  updatedAt?: string;
   label: string;
   value: string | string[];
   option?: string[];
@@ -8,4 +6,17 @@ export interface Question {
   required: boolean;
 }
 
+export interface Quiz {
+  startDate?: string;
+  endDate?: string;
+  title: string;
+  description?: string;
+}
 
+export interface QuizRequest {
+  startDate: string;
+  endDate: string;
+  title: string;
+  description: string;
+  published: boolean;
+}

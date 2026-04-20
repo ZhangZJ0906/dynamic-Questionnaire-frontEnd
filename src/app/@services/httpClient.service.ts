@@ -6,7 +6,7 @@ import { Injectable } from '@angular/core';
 })
 export class HttpClientService {
   constructor(private httpClient: HttpClient) {}
-
+  basicUrl="http://localhost:8080/";
   getApi(url: string) {
     return this.httpClient.get(url);
   }

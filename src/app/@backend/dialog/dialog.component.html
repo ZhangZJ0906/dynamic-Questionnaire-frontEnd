@@ -10,27 +10,27 @@
     <!-- 標題 -->
     <mat-form-field class="w-full">
       <mat-label>標題</mat-label>
-      <input matInput type="text" id="title" name="title" placeholder="請輸入問卷標題" />
+      <input matInput type="text" id="title" name="title" [(ngModel)]="basicInfo.title" placeholder="請輸入問卷標題" />
     </mat-form-field>
 
     <!-- 說明 -->
     <mat-form-field class="w-full">
       <mat-label>說明</mat-label>
-      <input matInput id="content" name="content" placeholder="請輸入問卷說明（選填）" />
+      <input matInput id="content" name="content" [(ngModel)]="basicInfo.description" placeholder="請輸入問卷說明（選填）" />
     </mat-form-field>
 
     <!-- 日期並排 -->
     <div class="flex gap-3">
       <mat-form-field class="flex-1">
         <mat-label>開始日期</mat-label>
-        <input matInput [matDatepicker]="startPicker" id="startDate" name="startDate" />
+        <input matInput [matDatepicker]="startPicker" id="startDate" name="startDate" [(ngModel)]="basicInfo.startDate" />
         <mat-datepicker-toggle matIconSuffix [for]="startPicker" />
         <mat-datepicker #startPicker />
       </mat-form-field>
 
       <mat-form-field class="flex-1">
         <mat-label>結束日期</mat-label>
-        <input matInput [matDatepicker]="endPicker" id="endDate" name="endDate" />
+        <input matInput [matDatepicker]="endPicker" id="endDate" name="endDate" [(ngModel)]="basicInfo.endDate" />
         <mat-datepicker-toggle matIconSuffix [for]="endPicker" />
         <mat-datepicker #endPicker />
       </mat-form-field>
