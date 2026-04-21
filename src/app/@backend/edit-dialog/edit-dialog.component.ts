@@ -28,6 +28,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatOption } from '@angular/material/core';
 import { HttpClientService } from '../../@services/httpClient.service';
+import { Utils } from '../../shared/utils';
 @Component({
   selector: 'app-edit-dialog',
   imports: [
@@ -53,14 +54,12 @@ import { HttpClientService } from '../../@services/httpClient.service';
   styleUrl: './edit-dialog.component.scss',
 })
 export class EditDialogComponent {
-  // quiz: any;
   basicInfo!: UpdateQuizRequest;
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<EditDialogComponent>,
     private http: HttpClientService,
   ) {
-    // this.quiz = { ...data };
     // this.basicInfo = {
     //   id: this.quiz.id, // 現在拿得到 ID 了
     //   title: this.quiz.title || '',
@@ -69,6 +68,11 @@ export class EditDialogComponent {
     //   endDate: this.quiz.endDate || '',
     //   published: this.quiz.published || false,
     // };
+    this.basicInfo = {
+      ...data,
+    };
+    // console.table(this.basicInfo);
+    this.getQuestion(this.basicInfo.id);
   }
 
   // quiz:
@@ -78,11 +82,35 @@ export class EditDialogComponent {
     this.dialogRef.close();
   }
 
-  
+  getQuestion(id: any) {
+    this.http
+      .getApi(this.http.basicUrl + `quiz/get_questions?quizId=${id}`)
+      .subscribe({
+        next: (res: any) => {
+          if (res.code != 200) {
+            Swal.fire({
+              title: '獲取問題失敗',
+              text: res.message || '獲取問題失敗',
+              icon: 'error',
+            });
+            return;
+          }
+          console.log(res);
+          this.question = res.questionVos;
+        },
+        error: (err) => {
+          Swal.fire({
+            title: '獲取問題失敗',
+            text: err.message || '獲取問題失敗',
+            icon: 'error',
+          });
+        },
+      });
+  }
 
   addQuestion() {
     const newQuestion: UpdateQuestionRequest = {
-      quizId: 1,
+      quizId: this.basicInfo.id,
       questionId: this.question.length + 1,
       question: '', // 原為 label
       type: 'TEXT', // 原為 questionType，給予預設值防止 NPE
@@ -90,6 +118,7 @@ export class EditDialogComponent {
       optionsList: [], // 原為 option
       answerValue: '',
     };
+    console.log(this.question);
 
     this.question.push(newQuestion);
   }
@@ -134,28 +163,22 @@ export class EditDialogComponent {
   }
 
   saveQuestion() {
-    // 建立一個轉換日期的輔助函式
-    const formatDate = (date: any) => {
-      if (!date) return '';
-      const d = new Date(date);
-      // 考慮時區問題，建議使用以下方式格式化為 YYYY-MM-DD
-      const year = d.getFullYear();
-      const month = ('0' + (d.getMonth() + 1)).slice(-2);
-      const day = ('0' + d.getDate()).slice(-2);
-      return `${year}-${month}-${day}`;
-    };
+
+
     const postData = {
       quiz: {
         ...this.basicInfo,
-        startDate: formatDate(this.basicInfo.startDate),
-        endDate: formatDate(this.basicInfo.endDate),
+        id: this.basicInfo.id,
+        startDate: Utils.formatDate(this.basicInfo.startDate),
+        endDate: Utils.formatDate(this.basicInfo.endDate),
       },
       questionVoList: this.question,
     };
-    // // ✅ 正確方式 A：分開印出（最推薦，可以看到清楚的結構）
-    // console.log('--- Post Data ---');
-    // console.table(postData.quiz); // 表格顯示問卷基本資訊
-    // console.table(postData.questionVoList); // 表格顯示題目列表
+
+    if (!Utils.validateData(postData)) {
+      return;
+    }
+
     this.http.postApi(this.http.basicUrl + 'quiz/update', postData).subscribe({
       next: (res: any) => {
         // --- 關鍵修改：檢查後端定義的自定義狀態碼 ---

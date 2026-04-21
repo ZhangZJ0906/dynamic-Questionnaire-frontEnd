@@ -1,4 +1,3 @@
-import { questions } from './../../@front/show-question/show-question.component';
 import { DialogComponent } from './../dialog/dialog.component';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 
@@ -43,7 +42,7 @@ export class DashboardComponent {
   startDate: Date | null = null; // 新增：開始日期變數
   endDate: Date | null = null; // 新增：結束日期變
   quiz: Survey[] = [];
-  questions:UpdateQuestionRequest[]=[];
+  questions: UpdateQuestionRequest[] = [];
   constructor(
     private dialog: MatDialog,
     private route: Router,
@@ -120,7 +119,6 @@ export class DashboardComponent {
     this.applyFilter();
   }
 
-  // TODO call api 新增問卷以及reload
   showNew() {
     this.dialog.open(DialogComponent, {
       width: '560px',
@@ -183,32 +181,10 @@ export class DashboardComponent {
       },
     });
   }
-  getQuestion(element:any) {
-      this.http
-        .getApi(this.http.basicUrl + `quiz/get_questions?quizId=${element.id}`)
-        .subscribe({
-          next: (res: any) => {
-            if (res.code != 200) {
-              Swal.fire({
-                title: '獲取問題失敗',
-                text: res.message || '獲取問題失敗',
-                icon: 'error',
-              });
-              return;
-            }
-            this.questions = res;
-          },
-          error: (err) => {
-            Swal.fire({
-              title: '獲取問題失敗',
-              text: err.message || '獲取問題失敗',
-              icon: 'error',
-            });
-          },
-        });
-    }
+
   //修改quiz的question
   editQuiz(element: any) {
+    // console.log(element);
     this.dialog.open(EditDialogComponent, {
       width: '560px',
       height: '560px',

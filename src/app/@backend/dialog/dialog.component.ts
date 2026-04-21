@@ -25,6 +25,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatOption } from '@angular/material/core';
 import { HttpClientService } from '../../@services/httpClient.service';
+import { Utils } from '../../shared/utils';
 @Component({
   selector: 'app-dialog',
   imports: [
@@ -120,28 +121,18 @@ export class DialogComponent {
   }
 
   saveQuestion() {
-    // 建立一個轉換日期的輔助函式
-    const formatDate = (date: any) => {
-      if (!date) return '';
-      const d = new Date(date);
-      // 考慮時區問題，建議使用以下方式格式化為 YYYY-MM-DD
-      const year = d.getFullYear();
-      const month = ('0' + (d.getMonth() + 1)).slice(-2);
-      const day = ('0' + d.getDate()).slice(-2);
-      return `${year}-${month}-${day}`;
-    };
     const postData = {
       quiz: {
         ...this.basicInfo,
-        startDate: formatDate(this.basicInfo.startDate),
-        endDate: formatDate(this.basicInfo.endDate),
+        startDate: Utils.formatDate(this.basicInfo.startDate),
+        endDate: Utils.formatDate(this.basicInfo.endDate),
       },
       questionVoList: this.question,
     };
-    // // ✅ 正確方式 A：分開印出（最推薦，可以看到清楚的結構）
-    // console.log('--- Post Data ---');
-    // console.table(postData.quiz); // 表格顯示問卷基本資訊
-    // console.table(postData.questionVoList); // 表格顯示題目列表
+    if (!Utils.validateData(postData)) {
+      return;
+    }
+
     this.http.postApi(this.http.basicUrl + 'quiz/create', postData).subscribe({
       next: (res: any) => {
         console.log(res);
