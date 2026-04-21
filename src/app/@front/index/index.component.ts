@@ -75,7 +75,16 @@ export class IndexComponent {
     };
 
     this.http.postApi(this.http.basicUrl + 'user/register', postData).subscribe({
-      next: (res) => {
+      next: (res:any) => {
+        // --- 關鍵修改：檢查後端定義的自定義狀態碼 ---
+        if (res.code !== 200) {
+          Swal.fire({
+            title: '註冊失敗',
+            text: res.message || '帳號或密碼錯誤',
+            icon: 'error',
+          });
+          return; // 擋掉，不執行後續登入邏輯
+        }
         Swal.fire({
           title: '註冊成功',
           icon: 'success',
@@ -109,8 +118,16 @@ export class IndexComponent {
     this.http
       .getApi(this.http.basicUrl + `user/login?email=${this.loginForm.get('email')?.value}`)
       .subscribe({
-        next: (res) => {
-          console.log(res);
+        next: (res:any) => {
+          // --- 關鍵修改：檢查後端定義的自定義狀態碼 ---
+          if (res.code !== 200) {
+            Swal.fire({
+              title: '登入失敗',
+              text: res.message || '帳號或密碼錯誤',
+              icon: 'error',
+            });
+            return; // 擋掉，不執行後續登入邏輯
+          }
           Swal.fire({
             title: '登入成功',
             icon: 'success',
@@ -131,9 +148,5 @@ export class IndexComponent {
       });
   }
 
-  ngOnInit(): void {
-    //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
-    //Add 'implements OnInit' to the class.
-    // console.log(this.password);
-  }
+
 }

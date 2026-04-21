@@ -1,3 +1,4 @@
+import { questions } from './../../@front/show-question/show-question.component';
 import { DialogComponent } from './../dialog/dialog.component';
 import { SidebarComponent } from '../sidebar/sidebar.component';
 
@@ -14,16 +15,11 @@ import { MatIcon } from '@angular/material/icon';
 import { MatDialog } from '@angular/material/dialog';
 import { Router } from '@angular/router';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-export interface Survey {
-  id: number;
-  title: string;
 
-  questionCount: number;
-  startDate: string;
-  endDate: string;
-  status: '進行中' | '已結束' | '草稿';
-  responseCount: number;
-}
+import { HttpClientService } from '../../@services/httpClient.service';
+import { Survey, UpdateQuestionRequest } from '../../@interfaces/question';
+import { EditDialogComponent } from '../edit-dialog/edit-dialog.component';
+
 @Component({
   selector: 'app-dashboard',
   imports: [
@@ -46,9 +42,12 @@ export class DashboardComponent {
   inputData: string = '';
   startDate: Date | null = null; // 新增：開始日期變數
   endDate: Date | null = null; // 新增：結束日期變
+  quiz: Survey[] = [];
+  questions:UpdateQuestionRequest[]=[];
   constructor(
     private dialog: MatDialog,
     private route: Router,
+    private http: HttpClientService,
   ) {}
 
   displayedColumns: string[] = [
@@ -61,12 +60,13 @@ export class DashboardComponent {
     'responseCount',
     'actions',
   ];
-  dataSource = new MatTableDataSource<Survey>(SURVEY_DATA);
+  dataSource = new MatTableDataSource<Survey>(this.quiz);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
   ngAfterViewInit() {
+    this.getQuiz();
     this.dataSource.paginator = this.paginator;
     //日期排序
     this.dataSource.sort = this.sort;
@@ -127,8 +127,94 @@ export class DashboardComponent {
       height: '560px',
       disableClose: false,
     });
+  }
+  //獲取 quiz 並不是 獲取 question
+  getQuiz() {
+    this.http.getApi(this.http.basicUrl + 'quiz/get_quiz_list').subscribe({
+      next: (res: any) => {
+        if (res.code != 200) {
+          Swal.fire({
+            title: '獲取問卷失敗',
+            text: res.message || '獲取問卷失敗',
+            icon: 'error',
+          });
+          return;
+        }
 
-    
+        const now = new Date();
+        now.setHours(0, 0, 0, 0); // 只比對日期
+
+        const processedList = res.quizList.map((item: any) => {
+          const start = new Date(item.startDate);
+          const end = new Date(item.endDate);
+
+          let currentStatus: string = '進行中';
+          if (now < start) {
+            currentStatus = '尚未開始';
+          } else if (now > end) {
+            currentStatus = '已結束';
+          }
+
+          return {
+            ...item,
+            status: currentStatus,
+            // 如果後端沒回傳數量，先給預設值 0
+            questionCount: res.quizList.length ?? 0,
+            responseCount: item.responseCount ?? 0,
+          };
+        });
+
+        // 2. 更新類別屬性
+        this.quiz = processedList;
+
+        // 3. 重要：必須把資料塞進 dataSource 畫面才會變更
+        this.dataSource.data = this.quiz;
+
+        // 如果你有分頁或排序，建議重新指定一次（保險起見）
+        this.dataSource.paginator = this.paginator;
+        this.dataSource.sort = this.sort;
+      },
+      error: (err) => {
+        Swal.fire({
+          title: '獲取問卷失敗',
+          text: err.message || '獲取問卷失敗',
+          icon: 'error',
+        });
+      },
+    });
+  }
+  getQuestion(element:any) {
+      this.http
+        .getApi(this.http.basicUrl + `quiz/get_questions?quizId=${element.id}`)
+        .subscribe({
+          next: (res: any) => {
+            if (res.code != 200) {
+              Swal.fire({
+                title: '獲取問題失敗',
+                text: res.message || '獲取問題失敗',
+                icon: 'error',
+              });
+              return;
+            }
+            this.questions = res;
+          },
+          error: (err) => {
+            Swal.fire({
+              title: '獲取問題失敗',
+              text: err.message || '獲取問題失敗',
+              icon: 'error',
+            });
+          },
+        });
+    }
+  //修改quiz的question
+  editQuiz(element: any) {
+    this.dialog.open(EditDialogComponent, {
+      width: '560px',
+      height: '560px',
+      disableClose: false,
+      data: element,
+    });
   }
   checkResult(element: any) {
     const id = element.id;
@@ -149,91 +235,11 @@ export class DashboardComponent {
       reverseButtons: true,
     }).then((res) => {
       //TODO call API 刪除問卷
-      this.delSuccess(title);
-    });
-  }
-
-  delSuccess(title: string) {
-    Swal.fire({
-      title: '成功',
-      text: `成功刪除「${title}」`,
-      icon: 'success',
+      Swal.fire({
+        title: '成功',
+        text: `成功刪除「${title}」`,
+        icon: 'success',
+      });
     });
   }
 }
-const SURVEY_DATA: Survey[] = [
-  {
-    id: 1,
-    title: '2024 員工滿意度調查',
-
-    questionCount: 20,
-    startDate: '2024-01-01',
-    endDate: '2024-01-31',
-    status: '已結束',
-    responseCount: 128,
-  },
-  {
-    id: 2,
-    title: '產品使用體驗問卷',
-
-    questionCount: 15,
-    startDate: '2024-02-01',
-    endDate: '2024-02-28',
-    status: '已結束',
-    responseCount: 87,
-  },
-  {
-    id: 3,
-    title: '客戶服務品質調查',
-    questionCount: 10,
-    startDate: '2024-03-01',
-    endDate: '2024-03-31',
-    status: '進行中',
-    responseCount: 45,
-  },
-  {
-    id: 4,
-    title: '新功能需求蒐集',
-    questionCount: 8,
-    startDate: '2024-03-15',
-    endDate: '2024-04-15',
-    status: '進行中',
-    responseCount: 32,
-  },
-  {
-    id: 5,
-    title: '辦公環境改善意見調查',
-    questionCount: 9,
-    startDate: '2024-01-15',
-    endDate: '2024-02-15',
-    status: '已結束',
-    responseCount: 214,
-  },
-  {
-    id: 6,
-    title: '主管領導力360度評鑑',
-    questionCount: 25,
-    startDate: '2024-02-20',
-    endDate: '2024-03-20',
-    status: '已結束',
-    responseCount: 76,
-  },
-  {
-    id: 7,
-    title: '市場競品分析問卷',
-    questionCount: 14,
-    startDate: '2024-03-20',
-    endDate: '2024-04-20',
-    status: '進行中',
-    responseCount: 59,
-  },
-  {
-    id: 8,
-    title: '系統操作易用性調查',
-    questionCount: 11,
-    startDate: '2024-03-25',
-    endDate: '2024-04-25',
-    status: '進行中',
-    responseCount: 23,
-  },
-];

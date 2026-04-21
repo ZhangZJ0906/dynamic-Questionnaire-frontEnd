@@ -1,7 +1,10 @@
-import { Question, QuizRequest } from './../../@interfaces/question';
+import {
+  UpdateQuestionRequest,
+  UpdateQuizRequest,
+} from './../../@interfaces/question';
 import Swal from 'sweetalert2';
 
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component, Output, EventEmitter, Inject } from '@angular/core';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
@@ -26,7 +29,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatOption } from '@angular/material/core';
 import { HttpClientService } from '../../@services/httpClient.service';
 @Component({
-  selector: 'app-dialog',
+  selector: 'app-edit-dialog',
   imports: [
     MatSelectModule,
     MatExpansionModule,
@@ -46,29 +49,40 @@ import { HttpClientService } from '../../@services/httpClient.service';
     MatSlideToggleModule,
   ],
   providers: [provideNativeDateAdapter()],
-  templateUrl: './dialog.component.html',
-  styleUrl: './dialog.component.scss',
+  templateUrl: './edit-dialog.component.html',
+  styleUrl: './edit-dialog.component.scss',
 })
-export class DialogComponent {
+export class EditDialogComponent {
+  // quiz: any;
+  basicInfo!: UpdateQuizRequest;
   constructor(
-    private dialogRef: MatDialogRef<DialogComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any,
+    private dialogRef: MatDialogRef<EditDialogComponent>,
     private http: HttpClientService,
-  ) {}
+  ) {
+    // this.quiz = { ...data };
+    // this.basicInfo = {
+    //   id: this.quiz.id, // 現在拿得到 ID 了
+    //   title: this.quiz.title || '',
+    //   description: this.quiz.description || '',
+    //   startDate: this.quiz.startDate || '',
+    //   endDate: this.quiz.endDate || '',
+    //   published: this.quiz.published || false,
+    // };
+  }
+
   // quiz:
-  question: Question[] = [];
-  basicInfo: QuizRequest = {
-    title: '',
-    description: '',
-    startDate: '',
-    endDate: '',
-    published: false, // 補上後端需要的欄位
-  };
+  question: UpdateQuestionRequest[] = [];
+
   onclose() {
     this.dialogRef.close();
   }
 
+  
+
   addQuestion() {
-    const newQuestion: Question = {
+    const newQuestion: UpdateQuestionRequest = {
+      quizId: 1,
       questionId: this.question.length + 1,
       question: '', // 原為 label
       type: 'TEXT', // 原為 questionType，給予預設值防止 NPE
@@ -81,7 +95,7 @@ export class DialogComponent {
   }
 
   // 2. 當題型切換時的處理
-  onTypeChange(q: Question) {
+  onTypeChange(q: UpdateQuestionRequest) {
     // 處理前端 UI 顯示用的預設值
     if (q.type === 'MUTI') {
       q.answerValue = []; // 多選時預設為空陣列
@@ -104,13 +118,13 @@ export class DialogComponent {
   }
 
   // 3. 輔助方法：新增選項
-  addOption(q: Question) {
+  addOption(q: UpdateQuestionRequest) {
     if (!q.optionsList) q.optionsList = [];
     q.optionsList.push(`選項 ${q.optionsList.length + 1}`);
   }
 
   // 4. 輔助方法：刪除選項
-  removeOption(q: Question, index: number) {
+  removeOption(q: UpdateQuestionRequest, index: number) {
     q.optionsList?.splice(index, 1);
   }
 
@@ -142,10 +156,8 @@ export class DialogComponent {
     // console.log('--- Post Data ---');
     // console.table(postData.quiz); // 表格顯示問卷基本資訊
     // console.table(postData.questionVoList); // 表格顯示題目列表
-    this.http.postApi(this.http.basicUrl + 'quiz/create', postData).subscribe({
+    this.http.postApi(this.http.basicUrl + 'quiz/update', postData).subscribe({
       next: (res: any) => {
-        console.log(res);
-        console.log('post Data    ' + postData);
         // --- 關鍵修改：檢查後端定義的自定義狀態碼 ---
         if (res.code !== 200) {
           Swal.fire({

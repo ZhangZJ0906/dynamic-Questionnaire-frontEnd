@@ -23,7 +23,8 @@
     <div class="flex gap-3">
       <mat-form-field class="flex-1">
         <mat-label>開始日期</mat-label>
-        <input matInput [matDatepicker]="startPicker" id="startDate" name="startDate" [(ngModel)]="basicInfo.startDate" />
+        <input matInput [matDatepicker]="startPicker" id="startDate" name="startDate"
+          [(ngModel)]="basicInfo.startDate" />
         <mat-datepicker-toggle matIconSuffix [for]="startPicker" />
         <mat-datepicker #startPicker />
       </mat-form-field>
