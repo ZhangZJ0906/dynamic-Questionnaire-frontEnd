@@ -74,7 +74,7 @@
 
           <!-- TODO 這邊應該會先判斷是否填過 再去判斷要顯示哪個button -->
           <button mat-stroked-button color="primary" class="whitespace-nowrap text-xs md:text-sm"
-            routerLink="/showquestion">填表單</button>
+            [routerLink]="['/showquestion', element.id]">填表單</button>
 
           }
           @case ("已結束") {

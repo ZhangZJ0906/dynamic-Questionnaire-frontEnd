@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  inject,
-  model,
-  signal,
-} from '@angular/core';
+import { Component } from '@angular/core';
 import { NavComponent } from '../nav/nav.component';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -29,6 +23,10 @@ import {
   MatDialogTitle,
 } from '@angular/material/dialog';
 import { ShowPreviewComponent } from '../show-preview/show-preview.component';
+import { HttpClientService } from '../../@services/httpClient.service';
+import { ActivatedRoute } from '@angular/router';
+import Swal from 'sweetalert2';
+import { UpdateQuestionRequest } from '../../@interfaces/question';
 
 export interface questions {}
 @Component({
@@ -52,13 +50,58 @@ export interface questions {}
   styleUrl: './show-question.component.scss',
 })
 export class ShowQuestionComponent {
-  constructor(private matdialog: MatDialog) {}
+  quizId: string | null = null;
+  question: UpdateQuestionRequest[] = [];
+  constructor(
+    private matdialog: MatDialog,
+    private http: HttpClientService,
+    private route: ActivatedRoute,
+  ) {
+    // 從路由快照中取得 quizId 參數 (名稱要跟 frontRoutes 定義的一樣)
+    this.quizId = this.route.snapshot.paramMap.get('quizId');
 
-  //TODO 秀出答案 
+    this.getQuestion(this.quizId);
+  }
+
+  getQuestion(quizId: any) {
+    const id = parseInt(quizId);
+    if (id == null || id <= 0) {
+      Swal.fire({
+        title: 'Id 參數錯誤',
+        text: '找不到該問卷或是Id 參數錯誤',
+        icon: 'error',
+      });
+      return;
+    }
+    this.http
+      .getApi(this.http.basicUrl + `quiz/get_questions?quizId=${id}`)
+      .subscribe({
+        next: (res: any) => {
+          if (res.code != 200) {
+            Swal.fire({
+              title: '獲取問題失敗',
+              text: res.message || '獲取問題失敗',
+              icon: 'error',
+            });
+            return;
+          }
+          console.log(res);
+          this.question = res.questionVos;
+        },
+        error: (err) => {
+          Swal.fire({
+            title: '獲取問題失敗',
+            text: err.message || '獲取問題失敗',
+            icon: 'error',
+          });
+        },
+      });
+  }
+  //TODO 秀出答案
   preview(/*data:any*/) {
     this.matdialog.open(ShowPreviewComponent, {
       width: '560px',
-      height:'560px'
+      height: '560px',
       //data:data
     });
   }

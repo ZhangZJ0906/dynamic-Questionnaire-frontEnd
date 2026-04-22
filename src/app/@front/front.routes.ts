@@ -14,7 +14,7 @@ export const frontRoutes: Routes = [
       import('./show-all/show-all.component').then((m) => m.ShowAllComponent),
   },
   {
-    path: 'showquestion',
+    path: 'showquestion/:quizId',
     loadComponent: () =>
       import('./show-question/show-question.component').then((m) => m.ShowQuestionComponent),
   },
