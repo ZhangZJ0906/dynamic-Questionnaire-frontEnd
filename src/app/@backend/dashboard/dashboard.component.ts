@@ -18,6 +18,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { HttpClientService } from '../../@services/httpClient.service';
 import { Survey, UpdateQuestionRequest } from '../../@interfaces/question';
 import { EditDialogComponent } from '../edit-dialog/edit-dialog.component';
+import { Observable } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
@@ -52,7 +53,6 @@ export class DashboardComponent {
   displayedColumns: string[] = [
     'id',
     'title',
-    'questionCount',
     'startDate',
     'endDate',
     'status',
@@ -120,77 +120,188 @@ export class DashboardComponent {
   }
 
   showNew() {
-    this.dialog.open(DialogComponent, {
+    const dialogRef = this.dialog.open(DialogComponent, {
       width: '560px',
       height: '560px',
       disableClose: false,
     });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === true) {
+        this.getQuiz();
+      }
+    });
   }
   //獲取 quiz 並不是 獲取 question
   getQuiz() {
-    this.http.getApi(this.http.basicUrl + 'quiz/get_quiz_list').subscribe({
-      next: (res: any) => {
-        if (res.code != 200) {
-          Swal.fire({
-            title: '獲取問卷失敗',
-            text: res.message || '獲取問卷失敗',
-            icon: 'error',
-          });
-          return;
-        }
-
-        const now = new Date();
-        now.setHours(0, 0, 0, 0); // 只比對日期
-
-        const processedList = res.quizList.map((item: any) => {
-          const start = new Date(item.startDate);
-          const end = new Date(item.endDate);
-
-          let currentStatus: string = '進行中';
-          if (now < start) {
-            currentStatus = '尚未開始';
-          } else if (now > end) {
-            currentStatus = '已結束';
+    this.http
+      .getApi(this.http.basicUrl + 'quiz/get_quiz_list?isFrontEnd=0')
+      .subscribe({
+        next: (res: any) => {
+          if (res.code != 200) {
+            Swal.fire({
+              title: '獲取問卷失敗',
+              text: res.message || '獲取問卷失敗',
+              icon: 'error',
+            });
+            return;
           }
 
-          return {
-            ...item,
-            status: currentStatus,
-            // 如果後端沒回傳數量，先給預設值 0
-            questionCount: res.quizList.length ?? 0,
-            responseCount: item.responseCount ?? 0,
-          };
+          const now = new Date();
+          now.setHours(0, 0, 0, 0); // 只比對日期
+
+          const processedList = res.quizList.map((item: any) => {
+            const start = new Date(item.startDate);
+            const end = new Date(item.endDate);
+
+            let currentStatus: string = '';
+
+            // 優先判斷是否「發佈」
+if (!item.published) {
+  currentStatus = '未發佈';
+} else if (now > end) {
+  currentStatus = '已結束';
+} else {
+  currentStatus = '進行中'; // 已發布（不管有沒有到開始日期）一律進行中
+}
+            return {
+              ...item,
+              status: currentStatus,
+              responseCount: item.responseCount ?? 0,
+            };
+          });
+
+          // 2. 更新類別屬性
+          this.quiz = processedList;
+
+          // 3. 重要：必須把資料塞進 dataSource 畫面才會變更
+          this.dataSource.data = this.quiz;
+
+          // 如果你有分頁或排序，建議重新指定一次（保險起見）
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
+        },
+        error: (err) => {
+          Swal.fire({
+            title: '獲取問卷失敗',
+            text: err.message || '獲取問卷失敗',
+            icon: 'error',
+          });
+        },
+      });
+  }
+
+  updatePublished(id: number, published: boolean): Observable<any> {
+    const postData = { id, published };
+    return this.http.postApi(
+      this.http.basicUrl + 'quiz/update_published',
+      postData,
+    );
+  }
+  //TODO call api 更新 published 欄位為true
+  publishedQuiz(element: any) {
+    const now = new Date();
+    const end = new Date(element.endDate);
+
+    const doPublish = () => {
+      Swal.fire({
+        title: '確定要發布嗎？',
+        text: `問卷「${element.title}」確定要發布?`,
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonText: '是的，發布！',
+        cancelButtonText: '再想想',
+        confirmButtonColor: '#3085d6',
+        reverseButtons: true,
+      }).then((res) => {
+        if (!res.isConfirmed) return;
+
+        this.updatePublished(element.id, true).subscribe({
+          next: (res: any) => {
+            if (res.code !== 200) {
+              Swal.fire({
+                title: '發布失敗',
+                text: res.message,
+                icon: 'error',
+              });
+              return; // ← 有 return，不會往下跑
+            }
+            Swal.fire({
+              title: '成功',
+              text: `已發布「${element.title}」`,
+              icon: 'success',
+            });
+            this.getQuiz(); // ← 發布成功後刷新列表
+          },
+          error: (err) => {
+            Swal.fire({ title: '發布失敗', text: err.message, icon: 'error' });
+          },
         });
+      });
+    };
 
-        // 2. 更新類別屬性
-        this.quiz = processedList;
+    if (now > end) {
+      Swal.fire({
+        title: '問卷已過期',
+        text: '仍要發布嗎？',
+        showCancelButton: true,
+      }).then((res) => {
+        if (res.isConfirmed) {
+          doPublish();
+        }
+      });
+      return;
+    }
 
-        // 3. 重要：必須把資料塞進 dataSource 畫面才會變更
-        this.dataSource.data = this.quiz;
-
-        // 如果你有分頁或排序，建議重新指定一次（保險起見）
-        this.dataSource.paginator = this.paginator;
-        this.dataSource.sort = this.sort;
-      },
-      error: (err) => {
-        Swal.fire({
-          title: '獲取問卷失敗',
-          text: err.message || '獲取問卷失敗',
-          icon: 'error',
-        });
-      },
-    });
+    doPublish();
   }
 
   //修改quiz的question
   editQuiz(element: any) {
-    // console.log(element);
-    this.dialog.open(EditDialogComponent, {
+    const dialogRef = this.dialog.open(EditDialogComponent, {
       width: '560px',
       height: '560px',
       disableClose: false,
       data: element,
     });
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result === true) {
+        this.getQuiz();
+      }
+    });
+  }
+
+  delete(id: number) {
+    if (!id || id <= 0) {
+      Swal.fire({
+        title: 'ID 錯誤',
+        text: '找不到該問卷的編號，請重新整理頁面再試一次',
+        icon: 'error',
+      });
+      return;
+    }
+    this.http
+      .getApi(this.http.basicUrl + `quiz/delete?quizId=${id}`)
+      .subscribe({
+        next: (res: any) => {
+          if (res.code != 200) {
+            Swal.fire({
+              title: '刪除問卷失敗',
+              text: res.message || '獲取問卷失敗',
+              icon: 'error',
+            });
+            return;
+          }
+          this.getQuiz();
+        },
+        error: (err) => {
+          Swal.fire({
+            title: '刪除問卷失敗',
+            text: err.message || '獲取問卷失敗',
+            icon: 'error',
+          });
+        },
+      });
   }
   checkResult(element: any) {
     const id = element.id;
@@ -210,7 +321,12 @@ export class DashboardComponent {
       confirmButtonColor: '#d33', // 刪除通常用紅色
       reverseButtons: true,
     }).then((res) => {
-      //TODO call API 刪除問卷
+      if (!res.isConfirmed) {
+        // ← 加上這個判斷
+        return;
+      }
+      this.delete(id);
+
       Swal.fire({
         title: '成功',
         text: `成功刪除「${title}」`,

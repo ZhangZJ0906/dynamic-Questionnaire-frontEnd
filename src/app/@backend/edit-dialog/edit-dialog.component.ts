@@ -60,18 +60,10 @@ export class EditDialogComponent {
     private dialogRef: MatDialogRef<EditDialogComponent>,
     private http: HttpClientService,
   ) {
-    // this.basicInfo = {
-    //   id: this.quiz.id, // 現在拿得到 ID 了
-    //   title: this.quiz.title || '',
-    //   description: this.quiz.description || '',
-    //   startDate: this.quiz.startDate || '',
-    //   endDate: this.quiz.endDate || '',
-    //   published: this.quiz.published || false,
-    // };
     this.basicInfo = {
       ...data,
     };
-    // console.table(this.basicInfo);
+
     this.getQuestion(this.basicInfo.id);
   }
 
@@ -109,16 +101,20 @@ export class EditDialogComponent {
   }
 
   addQuestion() {
+    const maxId =
+      this.question.length > 0
+        ? Math.max(...this.question.map((q) => q.questionId))
+        : 0;
     const newQuestion: UpdateQuestionRequest = {
       quizId: this.basicInfo.id,
-      questionId: this.question.length + 1,
+      questionId: maxId + 1,
       question: '', // 原為 label
       type: 'TEXT', // 原為 questionType，給予預設值防止 NPE
       required: false,
-      optionsList: [], // 原為 option
+      optionsList: null, // 原為 option
       answerValue: '',
     };
-    console.log(this.question);
+    // console.log(this.question);
 
     this.question.push(newQuestion);
   }
@@ -155,6 +151,10 @@ export class EditDialogComponent {
   // 4. 輔助方法：刪除選項
   removeOption(q: UpdateQuestionRequest, index: number) {
     q.optionsList?.splice(index, 1);
+    //順序重排
+    this.question.forEach((q, i) => {
+      q.questionId = i + 1;
+    });
   }
 
   // 5. 輔助方法：刪除題目
@@ -163,8 +163,14 @@ export class EditDialogComponent {
   }
 
   saveQuestion() {
-
-
+    // 1. 資料清洗：確保資料結構符合後端要求
+    const cleanedQuestions = this.question.map((q) => {
+      return {
+        ...q,
+        // 如果是文字題，強迫選項為空陣列；如果是選擇題但沒選項，給予空陣列避免 null
+        optionsList: q.type === 'TEXT' ? [] : q.optionsList || [],
+      };
+    });
     const postData = {
       quiz: {
         ...this.basicInfo,
@@ -172,13 +178,13 @@ export class EditDialogComponent {
         startDate: Utils.formatDate(this.basicInfo.startDate),
         endDate: Utils.formatDate(this.basicInfo.endDate),
       },
-      questionVoList: this.question,
+      questionVoList: cleanedQuestions,
     };
 
     if (!Utils.validateData(postData)) {
       return;
     }
-
+    console.table(postData.questionVoList);
     this.http.postApi(this.http.basicUrl + 'quiz/update', postData).subscribe({
       next: (res: any) => {
         // --- 關鍵修改：檢查後端定義的自定義狀態碼 ---

@@ -15,7 +15,7 @@ export interface Survey {
   endDate: string;
   published: boolean;
   // 以下為前端表格顯示需要的擴充欄位，設為選填
-  questionCount?: number;
+  
   status?: string;
   responseCount?: number;
 }
@@ -43,6 +43,6 @@ export interface UpdateQuestionRequest {
   question: string; // 對應後端的 question (原 label)
   type: 'TEXT' | 'SINGLE' | 'MUTI'; // 對應後端的 type (原 questionType)
   required: boolean; // 是否必填
-  optionsList?: string[]; // 對應後端的 optionsList (原 option)
+  optionsList?: string[]|null; // 對應後端的 optionsList (原 option)
   answerValue?: string | string[];
 }

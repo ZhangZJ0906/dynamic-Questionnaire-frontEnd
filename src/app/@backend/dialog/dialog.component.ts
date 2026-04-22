@@ -55,7 +55,7 @@ export class DialogComponent {
     private dialogRef: MatDialogRef<DialogComponent>,
     private http: HttpClientService,
   ) {}
-  // quiz:
+  today: Date = new Date(); // ← 加這行
   question: Question[] = [];
   basicInfo: QuizRequest = {
     title: '',

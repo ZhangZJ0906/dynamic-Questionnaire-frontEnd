@@ -34,7 +34,7 @@
       <!-- ID Column -->
       <ng-container matColumnDef="id">
         <th mat-header-cell *matHeaderCellDef>No.</th>
-        <td mat-cell *matCellDef="let element">{{ element.id }}</td>
+        <td mat-cell *matCellDef="let element; let i = index">{{ paginator.pageIndex * paginator.pageSize + i + 1 }}</td>
       </ng-container>
 
       <!-- 問卷名稱 Column -->
@@ -45,11 +45,7 @@
 
 
 
-      <!-- 題目數 Column -->
-      <ng-container matColumnDef="questionCount">
-        <th mat-header-cell *matHeaderCellDef>題目數</th>
-        <td mat-cell *matCellDef="let element">{{ element.questionCount }}</td>
-      </ng-container>
+
 
       <!-- 開始日期 -->
       <ng-container matColumnDef="startDate">

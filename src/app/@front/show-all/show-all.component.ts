@@ -30,16 +30,9 @@ import {
   MatDialogTitle,
 } from '@angular/material/dialog';
 import { DialogComponent } from '../dialog/dialog.component';
-
-export interface Survey {
-  id: number;
-  title: string;
-  questionCount: number;
-  startDate: string;
-  endDate: string;
-  status: '進行中' | '已結束';
-  responseCount: number;
-}
+import { Survey } from './../../@interfaces/question';
+import { HttpClientService } from '../../@services/httpClient.service';
+import Swal from 'sweetalert2';
 @Component({
   selector: 'app-show-all',
   imports: [
@@ -61,19 +54,25 @@ export interface Survey {
 })
 export class ShowAllComponent {
   inputData: string = '';
+  quiz: Survey[] = [];
+
   displayedColumns: string[] = [
     'id',
     'title',
-    'questionCount',
     'startDate',
     'endDate',
     'status',
     'actions',
   ];
-  dataSource = new MatTableDataSource<Survey>(SURVEY_DATA);
+  dataSource = new MatTableDataSource<Survey>(this.quiz);
   startDate: Date | null = null; // 新增：開始日期變數
   endDate: Date | null = null; // 新增：結束日期變數
-  constructor(private dialog: MatDialog) {}
+  constructor(
+    private dialog: MatDialog,
+    private http: HttpClientService,
+  ) {
+    this.getQuiz();
+  }
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
@@ -146,87 +145,63 @@ export class ShowAllComponent {
       disableClose: false,
     });
   }
+
+  getQuiz() {
+    this.http
+      .getApi(this.http.basicUrl + 'quiz/get_quiz_list?isFrontEnd=1')
+      .subscribe({
+        next: (res: any) => {
+          if (res.code != 200) {
+            Swal.fire({
+              title: '獲取問卷失敗',
+              text: res.message || '獲取問卷失敗',
+              icon: 'error',
+            });
+            return;
+          }
+
+          const now = new Date();
+          now.setHours(0, 0, 0, 0); // 只比對日期
+
+          const processedList = res.quizList.map((item: any) => {
+            const start = new Date(item.startDate);
+            const end = new Date(item.endDate);
+
+            let currentStatus: string = '';
+            if (!item.published) {
+              currentStatus = '未發佈';
+            } else if (now > end) {
+              currentStatus = '已結束';
+            } else {
+              currentStatus = '進行中'; // 已發布（不管有沒有到開始日期）一律進行中
+            }
+
+            return {
+              ...item,
+              status: currentStatus,
+              // 如果後端沒回傳數量，先給預設值 0
+              questionCount: res.quizList.length ?? 0,
+              responseCount: item.responseCount ?? 0,
+            };
+          });
+
+          // 2. 更新類別屬性
+          this.quiz = processedList;
+
+          // 3. 重要：必須把資料塞進 dataSource 畫面才會變更
+          this.dataSource.data = this.quiz;
+
+          // 如果你有分頁或排序，建議重新指定一次（保險起見）
+          this.dataSource.paginator = this.paginator;
+          this.dataSource.sort = this.sort;
+        },
+        error: (err) => {
+          Swal.fire({
+            title: '獲取問卷失敗',
+            text: err.message || '獲取問卷失敗',
+            icon: 'error',
+          });
+        },
+      });
+  }
 }
-const SURVEY_DATA: Survey[] = [
-  {
-    id: 1,
-    title: '2024 員工滿意度調查',
-
-    questionCount: 20,
-    startDate: '2024-01-01',
-    endDate: '2024-01-31',
-    status: '已結束',
-    responseCount: 128,
-  },
-  {
-    id: 2,
-    title: '產品使用體驗問卷',
-
-    questionCount: 15,
-    startDate: '2024-02-01',
-    endDate: '2024-02-28',
-    status: '已結束',
-    responseCount: 87,
-  },
-  {
-    id: 3,
-    title: '客戶服務品質調查',
-
-    questionCount: 10,
-    startDate: '2024-03-01',
-    endDate: '2024-03-31',
-    status: '進行中',
-    responseCount: 45,
-  },
-  {
-    id: 4,
-    title: '新功能需求蒐集',
-
-    questionCount: 8,
-    startDate: '2024-03-15',
-    endDate: '2024-04-15',
-    status: '進行中',
-    responseCount: 32,
-  },
-
-  {
-    id: 5,
-    title: '辦公環境改善意見調查',
-
-    questionCount: 9,
-    startDate: '2024-01-15',
-    endDate: '2024-02-15',
-    status: '已結束',
-    responseCount: 214,
-  },
-  {
-    id: 6,
-    title: '主管領導力360度評鑑',
-
-    questionCount: 25,
-    startDate: '2024-02-20',
-    endDate: '2024-03-20',
-    status: '已結束',
-    responseCount: 76,
-  },
-  {
-    id: 7,
-    title: '市場競品分析問卷',
-
-    questionCount: 14,
-    startDate: '2024-03-20',
-    endDate: '2024-04-20',
-    status: '進行中',
-    responseCount: 59,
-  },
-  {
-    id: 8,
-    title: '系統操作易用性調查',
-
-    questionCount: 11,
-    startDate: '2024-03-25',
-    endDate: '2024-04-25',
-    status: '進行中',
-    responseCount: 23,
-  },
-];

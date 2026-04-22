@@ -23,14 +23,15 @@
     <div class="flex gap-3">
       <mat-form-field class="flex-1">
         <mat-label>開始日期</mat-label>
-        <input matInput [matDatepicker]="startPicker" id="startDate" name="startDate" [(ngModel)]="basicInfo.startDate" />
+        <input matInput [matDatepicker]="startPicker" id="startDate" name="startDate" [(ngModel)]="basicInfo.startDate" [min]="today"/>
         <mat-datepicker-toggle matIconSuffix [for]="startPicker" />
         <mat-datepicker #startPicker />
       </mat-form-field>
 
       <mat-form-field class="flex-1">
         <mat-label>結束日期</mat-label>
-        <input matInput [matDatepicker]="endPicker" id="endDate" name="endDate" [(ngModel)]="basicInfo.endDate" />
+        <input matInput [matDatepicker]="endPicker" id="endDate" name="endDate" [(ngModel)]="basicInfo.endDate"
+        [min]="basicInfo.startDate || today" />
         <mat-datepicker-toggle matIconSuffix [for]="endPicker" />
         <mat-datepicker #endPicker />
       </mat-form-field>
