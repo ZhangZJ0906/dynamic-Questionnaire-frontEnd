@@ -51,9 +51,10 @@ export interface questions {}
 })
 export class ShowQuestionComponent {
   quizId: string | null = null;
-  answers: { [key: number]: any } = {};
+  answers: { [key: number|string]: any } = {};
   question: UpdateQuestionRequest[] = [];
   quiz: QuizRequest[] = [];
+  userInfo: any = {};
   constructor(
     private matdialog: MatDialog,
     private http: HttpClientService,
@@ -62,7 +63,34 @@ export class ShowQuestionComponent {
     // 從路由快照中取得 quizId 參數 (名稱要跟 frontRoutes 定義的一樣)
     this.quizId = this.route.snapshot.paramMap.get('quizId');
 
+    this.initUserData();
     this.getQuestion(this.quizId);
+  }
+  initUserData() {
+    try {
+      const data = localStorage.getItem("user");
+
+
+      if (data) {
+        this.userInfo = JSON.parse(data);
+
+
+        // 自動填入 answers 物件中，這樣 HTML 就會顯示
+        this.answers['name'] = this.userInfo.name || '';
+        this.answers['email'] = this.userInfo.email || '';
+        this.answers['phone'] = this.userInfo.phone || '';
+        this.answers['age'] = this.userInfo.age || null;
+      }
+    } catch (e :any) {
+      Swal.fire({
+        title: '解析 user 資料失敗',
+        text: e.message||'解析 user 資料失敗',
+        icon: 'error',
+      });
+
+
+
+    }
   }
   getQuiz(id: number) {
     if (id == null || id <= 0) {
@@ -85,9 +113,9 @@ export class ShowQuestionComponent {
             });
             return;
           }
-          console.log(res);
+
           this.quiz = res.quizList;
-          console.log(this.quiz);
+
         },
         error: (err) => {
           Swal.fire({
@@ -121,7 +149,7 @@ export class ShowQuestionComponent {
             });
             return;
           }
-          console.log(res);
+
           this.question = res.questionVos;
         },
         error: (err) => {
@@ -148,7 +176,7 @@ export class ShowQuestionComponent {
         this.answers[questionId].splice(index, 1);
       }
     }
-    console.log('當前所有答案:', this.answers);
+
   }
 
   // 存檔
@@ -169,8 +197,7 @@ export class ShowQuestionComponent {
   //TODO 秀出答案
   preview() {
     this.saveToLocal();
-    console.log('準備傳出的題目:', this.question);
-    console.log('準備傳出的答案:', this.answers);
+
     this.matdialog.open(ShowPreviewComponent, {
       width: '560px',
       height: '560px',

@@ -74,31 +74,33 @@ export class IndexComponent {
       age: this.registerForm.get('registerAge')?.value,
     };
 
-    this.http.postApi(this.http.basicUrl + 'user/register', postData).subscribe({
-      next: (res:any) => {
-        // --- 關鍵修改：檢查後端定義的自定義狀態碼 ---
-        if (res.code !== 200) {
+    this.http
+      .postApi(this.http.basicUrl + 'user/register', postData)
+      .subscribe({
+        next: (res: any) => {
+          // --- 關鍵修改：檢查後端定義的自定義狀態碼 ---
+          if (res.code !== 200) {
+            Swal.fire({
+              title: '註冊失敗',
+              text: res.message || '帳號或密碼錯誤',
+              icon: 'error',
+            });
+            return; // 擋掉，不執行後續登入邏輯
+          }
+          Swal.fire({
+            title: '註冊成功',
+            icon: 'success',
+          });
+          this.registerForm.reset();
+        },
+        error: (err) => {
           Swal.fire({
             title: '註冊失敗',
-            text: res.message || '帳號或密碼錯誤',
+            text: err.error?.message || '伺服器連線異常',
             icon: 'error',
           });
-          return; // 擋掉，不執行後續登入邏輯
-        }
-        Swal.fire({
-          title: '註冊成功',
-          icon: 'success',
-        });
-        this.registerForm.reset();
-      },
-      error: (err) => {
-        Swal.fire({
-          title: '註冊失敗',
-          text: err.error?.message || '伺服器連線異常',
-          icon: 'error',
-        });
-      },
-    });
+        },
+      });
     this.test = !this.test;
   }
 
@@ -113,12 +115,13 @@ export class IndexComponent {
       return; // 直接中斷，不發送 API
     }
 
-
-
     this.http
-      .getApi(this.http.basicUrl + `user/login?email=${this.loginForm.get('email')?.value}`)
+      .getApi(
+        this.http.basicUrl +
+          `user/login?email=${this.loginForm.get('email')?.value}&name=${this.loginForm.get('name')?.value}`,
+      )
       .subscribe({
-        next: (res:any) => {
+        next: (res: any) => {
           // --- 關鍵修改：檢查後端定義的自定義狀態碼 ---
           if (res.code !== 200) {
             Swal.fire({
@@ -132,9 +135,15 @@ export class IndexComponent {
             title: '登入成功',
             icon: 'success',
           });
-          const mockToken = 'session_' + Math.random().toString(36).substr(2);
 
-          this.auth.login(mockToken);
+          const mockToken = 'session_' + Math.random().toString(36).substr(2);
+          const authData = {
+            name: res.name,
+            email: res.email,
+            phone: res.phone,
+            age: res.age,
+          };
+          this.auth.login(mockToken, authData);
         },
         error: (err) => {
           Swal.fire({
@@ -147,6 +156,4 @@ export class IndexComponent {
         },
       });
   }
-
-
 }
