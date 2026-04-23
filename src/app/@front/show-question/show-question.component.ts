@@ -26,7 +26,7 @@ import { ShowPreviewComponent } from '../show-preview/show-preview.component';
 import { HttpClientService } from '../../@services/httpClient.service';
 import { ActivatedRoute } from '@angular/router';
 import Swal from 'sweetalert2';
-import { UpdateQuestionRequest } from '../../@interfaces/question';
+import { QuizRequest, UpdateQuestionRequest } from '../../@interfaces/question';
 
 export interface questions {}
 @Component({
@@ -51,7 +51,9 @@ export interface questions {}
 })
 export class ShowQuestionComponent {
   quizId: string | null = null;
+  answers: { [key: number]: any } = {};
   question: UpdateQuestionRequest[] = [];
+  quiz: QuizRequest[] = [];
   constructor(
     private matdialog: MatDialog,
     private http: HttpClientService,
@@ -62,9 +64,43 @@ export class ShowQuestionComponent {
 
     this.getQuestion(this.quizId);
   }
-
+  getQuiz(id: number) {
+    if (id == null || id <= 0) {
+      Swal.fire({
+        title: 'Id 參數錯誤',
+        text: '找不到該問卷或是Id 參數錯誤',
+        icon: 'error',
+      });
+      return;
+    }
+    this.http
+      .getApi(this.http.basicUrl + `quiz/get_quiz_by_id?quizId=${id}`)
+      .subscribe({
+        next: (res: any) => {
+          if (res.code != 200) {
+            Swal.fire({
+              title: '獲取問卷失敗',
+              text: res.message || '獲取問卷失敗',
+              icon: 'error',
+            });
+            return;
+          }
+          console.log(res);
+          this.quiz = res.quizList;
+          console.log(this.quiz);
+        },
+        error: (err) => {
+          Swal.fire({
+            title: '獲取問卷失敗',
+            text: err.message || '獲取問卷失敗',
+            icon: 'error',
+          });
+        },
+      });
+  }
   getQuestion(quizId: any) {
     const id = parseInt(quizId);
+    this.getQuiz(id);
     if (id == null || id <= 0) {
       Swal.fire({
         title: 'Id 參數錯誤',
@@ -97,12 +133,51 @@ export class ShowQuestionComponent {
         },
       });
   }
+
+  // 處理多選題的勾選狀態
+  onCheckboxChange(questionId: number, option: string, isChecked: boolean) {
+    if (!this.answers[questionId]) {
+      this.answers[questionId] = [];
+    }
+
+    if (isChecked) {
+      this.answers[questionId].push(option);
+    } else {
+      const index = this.answers[questionId].indexOf(option);
+      if (index > -1) {
+        this.answers[questionId].splice(index, 1);
+      }
+    }
+    console.log('當前所有答案:', this.answers);
+  }
+
+  // 存檔
+  saveToLocal() {
+    localStorage.setItem(
+      `quiz_${this.quizId}_cache`,
+      JSON.stringify(this.answers),
+    );
+  }
+
+  // 讀檔 (在 ngOnInit 或是獲取問題成功後呼叫)
+  loadFromLocal() {
+    const cache = localStorage.getItem(`quiz_${this.quizId}_cache`);
+    if (cache) {
+      this.answers = JSON.parse(cache);
+    }
+  }
   //TODO 秀出答案
-  preview(/*data:any*/) {
+  preview() {
+    this.saveToLocal();
+    console.log('準備傳出的題目:', this.question);
+    console.log('準備傳出的答案:', this.answers);
     this.matdialog.open(ShowPreviewComponent, {
       width: '560px',
       height: '560px',
-      //data:data
+      data: {
+        question: this.question,
+        answer: this.answers,
+      },
     });
   }
 }

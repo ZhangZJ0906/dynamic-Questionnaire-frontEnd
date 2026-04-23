@@ -1,47 +1,27 @@
-<h2 mat-dialog-title>
-  問卷預覽
-</h2>
+<h2 mat-dialog-title>問卷預覽</h2>
 
 <mat-dialog-content class="space-y-5">
-
-  <!-- 說明 -->
-  <p class="text-gray-500 text-sm">
-    請確認以下填寫內容是否正確
-  </p>
-
+  <p class="text-gray-500 text-sm">請確認以下填寫內容是否正確</p>
   <mat-divider></mat-divider>
 
-  <!-- 題目卡片 -->
-  <mat-card class="rounded-xl my-5">
+  @for (q of data.question; track q.questionId; let i = $index) {
+  <mat-card class="rounded-xl my-4 shadow-sm border border-gray-100">
     <mat-card-header>
       <mat-card-title class="text-base font-semibold">
-        <!-- {{ title }} -->
-          題目
+        {{ i + 1 }}. {{ q.question }}
       </mat-card-title>
-
-
     </mat-card-header>
 
     <mat-card-content class="pt-3">
       <div class="bg-gray-50 rounded-lg p-3 text-gray-800">
-        <!-- {{ answer || '（尚未填寫）' }} -->
-
-        假答案
+        {{ formatAnswer(data.answer[q.questionId]) }}
       </div>
     </mat-card-content>
   </mat-card>
-
+  }
 </mat-dialog-content>
 
-
 <mat-dialog-actions align="end" class="gap-2 pt-4">
-
-  <button mat-button mat-dialog-close (click)="onCancel()">
-    繼續修改
-  </button>
-
-  <button mat-flat-button color="primary" (click)="submit()">
-    確認送出
-  </button>
-
+  <button mat-button mat-dialog-close (click)="onCancel()">繼續修改</button>
+  <button mat-flat-button color="primary" (click)="submit()">確認送出</button>
 </mat-dialog-actions>

@@ -1,57 +1,74 @@
 <app-nav></app-nav>
 
 <div class="max-w-2xl mx-auto p-6">
-
-  <!-- 卡片 -->
   <mat-card class="p-6">
-
     <mat-card-header>
-      <mat-card-title class="text-2xl font-bold">
-        問卷調查
-      </mat-card-title>
+      <mat-card-title class="text-2xl font-bold">問卷標題: {{quiz[0]?.title}}</mat-card-title>
       <mat-card-subtitle>
-        未來修改說明文字
+        <div class="mb-2">描述: {{quiz[0]?.description}}</div>
+
+        <div class="flex flex-wrap gap-4 text-sm text-gray-600">
+          <span class="flex items-center">
+            <mat-icon class="text-base h-4 w-4 mr-1">event</mat-icon>
+            活動期間：{{quiz[0]?.startDate }} ~ {{quiz[0]?.endDate }}
+          </span>
+          <span class="flex items-center">
+            <mat-icon class="text-base h-4 w-4 mr-1">assignment</mat-icon>
+            題目總數：{{question.length}} 題
+          </span>
+        </div>
+
+        <mat-divider class="my-2"></mat-divider>
+        <p class="mt-2 text-blue-600 font-medium italic">請填寫以下資訊：</p>
       </mat-card-subtitle>
     </mat-card-header>
 
     <mat-divider class="my-4"></mat-divider>
 
-    <form class="flex flex-col gap-6">
+    <form class="flex flex-col gap-8">
+      @for (item of question; track item.questionId; let i = $index) {
+      <div class="question-container">
+        <p class="font-semibold mb-3 text-lg">
+          {{ i + 1 }}. {{ item.question }}
+          @if (item.required) {
+          <span class="text-red-500">*</span>
+          }
+        </p>
 
-      <!-- 簡答 -->
-      <mat-form-field class="w-full">
-        <mat-label>簡答題</mat-label>
-        <input matInput name="easy" placeholder="請輸入內容">
-      </mat-form-field>
+        @if (item.type === 'TEXT') {
+        <mat-form-field class="w-full">
+          <mat-label>您的回答</mat-label>
+          <input matInput [name]="'q-' + item.questionId" [(ngModel)]="answers[item.questionId]" placeholder="請輸入內容">
+        </mat-form-field>
+        }
 
-      <!-- 單選 -->
-      <div>
-        <p class="font-semibold mb-2">性別</p>
-
-        <mat-radio-group name="gender" class="flex gap-6">
-          <mat-radio-button value="male">男</mat-radio-button>
-          <mat-radio-button value="female">女</mat-radio-button>
+        @if (item.type === 'SINGLE') {
+        <mat-radio-group [name]="'q-' + item.questionId" [(ngModel)]="answers[item.questionId]"
+          class="flex flex-col gap-2">
+          @for (option of item.optionsList; track option) {
+          <mat-radio-button [value]="option">{{ option }}</mat-radio-button>
+          }
         </mat-radio-group>
-      </div>
+        }
 
-      <!-- 多選 -->
-      <div>
-        <p class="font-semibold mb-2">興趣（可複選）</p>
-
-        <div class="grid grid-cols-2 gap-3">
-          <mat-checkbox value="sport">運動</mat-checkbox>
-          <mat-checkbox value="music">音樂</mat-checkbox>
-          <mat-checkbox value="game">遊戲</mat-checkbox>
+        @if ( item.type === 'MUTI') {
+        <div class="grid grid-cols-1 gap-2">
+          @for (option of item.optionsList; track option) {
+          <mat-checkbox [value]="option" [checked]="answers[item.questionId]?.includes(option)"
+            (change)="onCheckboxChange(item.questionId, option, $event.checked)">{{ option }}</mat-checkbox>
+          }
         </div>
+        }
       </div>
 
-      <!-- 送出 -->
-      <button mat-raised-button color="primary" type="submit" class="w-full" (click)="preview()">
+      @if (!$last) {
+      <mat-divider class="my-4"></mat-divider>
+      }
+      }
+
+      <button mat-raised-button color="primary" type="submit" class="w-full mt-4" (click)="preview()">
         送出問卷
       </button>
-
     </form>
-
   </mat-card>
-
 </div>
