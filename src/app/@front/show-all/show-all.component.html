@@ -79,7 +79,7 @@
           }
           @case ("已結束") {
           <button mat-flat-button color="primary" class="whitespace-nowrap text-xs md:text-sm"
-            (click)="openDialog(element)">查看結果</button>
+            [routerLink]="['/showquestion', element.id]" >查看結果</button>
           }
           }
         </td>

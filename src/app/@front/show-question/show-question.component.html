@@ -8,7 +8,7 @@
       </mat-card-title>
       <mat-card-subtitle>
         <div class="mb-2">描述: {{quiz[0]?.description}}</div>
-                <div class="flex flex-wrap gap-4 text-sm text-gray-600">
+        <div class="flex flex-wrap gap-4 text-sm text-gray-600">
           <span class="flex items-center">
             <mat-icon class="text-base h-4 w-4 mr-1">event</mat-icon>
             活動期間：{{quiz[0]?.startDate }} ~ {{quiz[0]?.endDate }}
@@ -30,22 +30,22 @@
         </p>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-x-4">
-          <mat-form-field >
+          <mat-form-field>
             <mat-label>姓名</mat-label>
             <input matInput [(ngModel)]="userInfo.name" name="userName" required readonly>
           </mat-form-field>
 
-          <mat-form-field >
+          <mat-form-field>
             <mat-label>電話</mat-label>
             <input matInput [(ngModel)]="userInfo.phone" name="userPhone" required readonly>
           </mat-form-field>
 
-          <mat-form-field >
+          <mat-form-field>
             <mat-label>Email</mat-label>
             <input matInput type="email" [(ngModel)]="userInfo.email" name="userEmail" required readonly>
           </mat-form-field>
 
-          <mat-form-field >
+          <mat-form-field>
             <mat-label>年齡</mat-label>
             <input matInput type="number" [(ngModel)]="userInfo.age" name="userAge" required readonly>
           </mat-form-field>
@@ -56,37 +56,50 @@
 
       <form class="flex flex-col gap-8">
         @for (item of question; track item.questionId; let i = $index) {
-          <div class="question-container">
-            <p class="font-semibold mb-3 text-lg">
-              {{ i + 1 }}. {{ item.question }}
-              @if (item.required) { <span class="text-red-500">*</span> }
-            </p>
+        <div class="question-container">
+          <p class="font-semibold mb-3 text-lg">
+            {{ i + 1 }}. {{ item.question }}
+            @if (item.required) { <span class="text-red-500">*</span> }
+          </p>
 
-            @if (item.type === 'TEXT') {
-              <mat-form-field class="w-full">
-                <mat-label>您的回答</mat-label>
-                <input matInput [name]="'q-' + item.questionId" [(ngModel)]="answers[item.questionId]">
-              </mat-form-field>
+          @if (item.type === 'TEXT') {
+          <mat-form-field class="w-full">
+            <mat-label>您的回答</mat-label>
+            @if (item.required) {
+            <input matInput [name]="'q-' + item.questionId" [(ngModel)]="answers[item.questionId]" required> }
+            @else {
+            <input matInput [name]="'q-' + item.questionId" [(ngModel)]="answers[item.questionId]">
+
             }
+          </mat-form-field>
+          }
 
-            @if (item.type === 'SINGLE') {
-              <mat-radio-group [name]="'q-' + item.questionId" [(ngModel)]="answers[item.questionId]" class="flex flex-col gap-2">
-                @for (option of item.optionsList; track option) {
-                  <mat-radio-button [value]="option">{{ option }}</mat-radio-button>
-                }
-              </mat-radio-group>
+          @if (item.type === 'SINGLE') {
+          @if (item.required && !answers[item.questionId]) {
+          <mat-error class="text-xs">此題為必填</mat-error>
+          }
+          <mat-radio-group [name]="'q-' + item.questionId" [(ngModel)]="answers[item.questionId]"
+            class="flex flex-col gap-2" [required]="item.required">
+            @for (option of item.optionsList; track option) {
+            <mat-radio-button [value]="option">{{ option }}</mat-radio-button>
             }
+          </mat-radio-group>
 
-            @if (item.type === 'MUTI') {
-              <div class="grid grid-cols-1 gap-2">
-                @for (option of item.optionsList; track option) {
-                  <mat-checkbox [checked]="answers[item.questionId]?.includes(option)"
-                    (change)="onCheckboxChange(item.questionId, option, $event.checked)">{{ option }}</mat-checkbox>
-                }
-              </div>
+          }
+
+          @if (item.type === 'MUTI') {
+          <div class="grid grid-cols-1 gap-2">
+            @for (option of item.optionsList; track option) {
+            <mat-checkbox [checked]="answers[item.questionId]?.includes(option)" [required]="item.required"
+              (change)="onCheckboxChange(item.questionId, option, $event.checked)">{{ option }}</mat-checkbox>
             }
           </div>
-          @if (!$last) { <mat-divider class="my-4"></mat-divider> }
+          @if (item.required && (!answers[item.questionId] || answers[item.questionId].length === 0)) {
+          <mat-error class="text-xs">請至少選擇一個選項</mat-error>
+          }
+          }
+        </div>
+        @if (!$last) { <mat-divider class="my-4"></mat-divider> }
         }
 
         <button mat-raised-button color="primary" class="w-full mt-4" (click)="preview()">

@@ -51,7 +51,7 @@ export interface questions {}
 })
 export class ShowQuestionComponent {
   quizId: string | null = null;
-  answers: { [key: number|string]: any } = {};
+  answers: { [key: number | string]: any } = {};
   question: UpdateQuestionRequest[] = [];
   quiz: QuizRequest[] = [];
   userInfo: any = {};
@@ -62,34 +62,32 @@ export class ShowQuestionComponent {
   ) {
     // 從路由快照中取得 quizId 參數 (名稱要跟 frontRoutes 定義的一樣)
     this.quizId = this.route.snapshot.paramMap.get('quizId');
-
+    this.getFeedBack(this.quizId);
     this.initUserData();
     this.getQuestion(this.quizId);
   }
   initUserData() {
     try {
-      const data = localStorage.getItem("user");
-
+      const data = localStorage.getItem('user');
 
       if (data) {
-        this.userInfo = JSON.parse(data);
+        const userData = JSON.parse(data);
 
+        this.userInfo = {
+          name: userData.name || '',
+          email: userData.email || '',
+          phone: userData.phone || '',
+          age: userData.age || null,
+        };
 
         // 自動填入 answers 物件中，這樣 HTML 就會顯示
-        this.answers['name'] = this.userInfo.name || '';
-        this.answers['email'] = this.userInfo.email || '';
-        this.answers['phone'] = this.userInfo.phone || '';
-        this.answers['age'] = this.userInfo.age || null;
       }
-    } catch (e :any) {
+    } catch (e: any) {
       Swal.fire({
         title: '解析 user 資料失敗',
-        text: e.message||'解析 user 資料失敗',
+        text: e.message || '解析 user 資料失敗',
         icon: 'error',
       });
-
-
-
     }
   }
   getQuiz(id: number) {
@@ -115,7 +113,6 @@ export class ShowQuestionComponent {
           }
 
           this.quiz = res.quizList;
-
         },
         error: (err) => {
           Swal.fire({
@@ -176,7 +173,6 @@ export class ShowQuestionComponent {
         this.answers[questionId].splice(index, 1);
       }
     }
-
   }
 
   // 存檔
@@ -197,14 +193,46 @@ export class ShowQuestionComponent {
   //TODO 秀出答案
   preview() {
     this.saveToLocal();
+    const missingQuestions = this.question.filter((q) => {
+      if (!q.required) return false; // 非必填直接跳過
 
+      const answer = this.answers[q.questionId];
+
+      if (q.type === 'MUTI') {
+        // 多選題：檢查陣列是否存在且長度大於 0
+        return !answer || answer.length === 0;
+      } else {
+        // 簡答或單選：檢查是否有值
+        return !answer || answer.toString().trim() === '';
+      }
+    });
+
+    if (missingQuestions.length > 0) {
+      Swal.fire({
+        title: '尚未完成',
+        text: `還有 ${missingQuestions.length} 個必填項目未填寫！`,
+        icon: 'warning',
+      });
+      return; // 攔截，不開啟預覽
+    }
     this.matdialog.open(ShowPreviewComponent, {
       width: '560px',
       height: '560px',
       data: {
         question: this.question,
         answer: this.answers,
+        userInfo: this.userInfo,
       },
     });
+  }
+
+  getFeedBack(quizId: any) {
+    this.http
+      .getApi(this.http.basicUrl + `fillin/feed_back?quizId=${quizId}`)
+      .subscribe({
+        next: (value) => {
+          console.log(value);
+        },
+      });
   }
 }

@@ -1,8 +1,19 @@
+
+
+
+
 import { NavComponent } from '../nav/nav.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
 
-import { Component, ViewChild } from '@angular/core';
+import {
+  Component,
+  ViewChild,
+  ChangeDetectionStrategy,
+  inject,
+  model,
+  signal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -12,11 +23,24 @@ import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
+import { MatButtonModule } from '@angular/material/button';
+import {
+  MAT_DIALOG_DATA,
+  MatDialog,
+  MatDialogActions,
+  MatDialogClose,
+  MatDialogContent,
+  MatDialogRef,
+  MatDialogTitle,
+} from '@angular/material/dialog';
+import { DialogComponent } from '../dialog/dialog.component';
 import { Survey } from './../../@interfaces/question';
 import { HttpClientService } from '../../@services/httpClient.service';
 import Swal from 'sweetalert2';
+
+
 @Component({
-  selector: 'app-show-all',
+  selector: 'app-feed-back',
   imports: [
     NavComponent,
     MatTableModule,
@@ -31,29 +55,21 @@ import Swal from 'sweetalert2';
     MatDatepickerModule,
   ],
   providers: [provideNativeDateAdapter()],
-  templateUrl: './show-all.component.html',
-  styleUrl: './show-all.component.scss',
+  templateUrl: './feed-back.component.html',
+  styleUrl: './feed-back.component.scss',
 })
-export class ShowAllComponent {
+export class FeedBackComponent {
   inputData: string = '';
   quiz: Survey[] = [];
-  feedBackInfo: any ={};
 
-  displayedColumns: string[] = [
-    'id',
-    'title',
-    'startDate',
-    'endDate',
-    'status',
-    'actions',
-  ];
+  displayedColumns: string[] = ['name', 'email', 'fillinDate', 'actions'];
   dataSource = new MatTableDataSource<Survey>(this.quiz);
   startDate: Date | null = null; // 新增：開始日期變數
   endDate: Date | null = null; // 新增：結束日期變數
-  constructor(private http: HttpClientService) {
-    this.getQuiz();
-    
-  }
+  constructor(
+    private dialog: MatDialog,
+    private http: HttpClientService,
+  ) {}
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
 
@@ -94,16 +110,6 @@ export class ShowAllComponent {
       return matchesSearch && matchesDate;
     };
   }
-  // 確認是否重複填
-  isRepeat() {
-    console.log(this.feedBackInfo)
-
-    const data = localStorage.getItem('user');
-
-    if (data) {
-      const userData = JSON.parse(data);
-    }
-  }
 
   // 統一觸發篩選的方法
   applyFilter() {
@@ -120,6 +126,15 @@ export class ShowAllComponent {
     this.startDate = null;
     this.endDate = null;
     this.applyFilter();
+  }
+  //dialog
+  openDialog(element: any): void {
+    const id = element.id;
+    const dialogRef = this.dialog.open(DialogComponent, {
+      width: '560px',
+      height: '560px',
+      disableClose: false,
+    });
   }
 
   getQuiz() {
@@ -163,7 +178,6 @@ export class ShowAllComponent {
 
           // 2. 更新類別屬性
           this.quiz = processedList;
-          
 
           // 3. 重要：必須把資料塞進 dataSource 畫面才會變更
           this.dataSource.data = this.quiz;
@@ -186,9 +200,10 @@ export class ShowAllComponent {
     this.http
       .getApi(this.http.basicUrl + `fillin/feed_back?quizId=${quizId}`)
       .subscribe({
-        next: (value:any) => {
-          this.feedBackInfo=value;
+        next: (value) => {
+          console.log(value);
         },
       });
   }
 }
+

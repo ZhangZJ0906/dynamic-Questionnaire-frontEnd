@@ -49,9 +49,10 @@ export class ShowPreviewComponent {
     private matdialog: MatDialog,
     private router: Router,
     private http: HttpClientService,
-    @Inject(MAT_DIALOG_DATA) public data: { question: any[]; answer: any },
+    @Inject(MAT_DIALOG_DATA)
+    public data: { question: any[]; answer: any; userInfo: any },
   ) {
-
+    console.log(this.data.question);
   }
 
   onCancel() {
@@ -64,8 +65,62 @@ export class ShowPreviewComponent {
     }
     return val || '（尚未填寫）';
   }
-  sendData(postData:any){
+  sendData() {
+    const answersVos = Object.keys(this.data.answer)
+      .filter((key) => !isNaN(Number(key))) // 只取數字 Key (題目 ID)
+      .map((key) => {
+        const val = this.data.answer[key];
 
+        // 重要：後端 AnswersVo 要的是 answerList (List<String>)
+        // 所以不論是單選還是多選，都要包成陣列 [ ]
+        let finalAnswerList: string[] = [];
+
+        if (Array.isArray(val)) {
+          finalAnswerList = val.map((v) => v.toString()); // 多選
+        } else if (val !== null && val !== undefined) {
+          finalAnswerList = [val.toString()]; // 單選或簡答，也要轉成 [ "答案" ]
+        }
+
+        return {
+          questionId: parseInt(key),
+          answerList: finalAnswerList, // 這裡名稱必須叫 answerList
+        };
+      });
+    const postData = {
+      answersVos: answersVos,
+      email: this.data.userInfo.email,
+      quizId: this.data.question[0].quizId,
+    };
+    
+    // @Inject(MAT_DIALOG_DATA) public data: { question: any[]; answer: any ,userInfo:any},
+    this.http
+      .postApi(this.http.basicUrl + 'fillin/fillin_answer', postData)
+      .subscribe({
+        next: (res: any) => {
+          if (res.code != 200) {
+            Swal.fire({
+              title: '填答失敗',
+              text: res.message || '參數錯誤或是伺服器錯誤',
+              icon: 'error',
+            });
+            return;
+          }
+          Swal.fire({
+            title: '送出成功',
+            text: '成功',
+            icon: 'success',
+          });
+          this.dialogRef.close(true);
+          this.router.navigate(['/showAll']);
+        },
+        error: (err) => {
+          Swal.fire({
+            title: '填答失敗',
+            text: err.message || '參數錯誤或是伺服器錯誤',
+            icon: 'error',
+          });
+        },
+      });
   }
   submit() {
     //TODO call API 送資料
@@ -81,11 +136,10 @@ export class ShowPreviewComponent {
       confirmButtonColor: 'var(--mat-sys-primary)',
       cancelButtonColor: 'var(--mat-sys-error)',
     }).then((result) => {
-      
       if (!result.isConfirmed) {
         return;
       }
-
+      this.sendData();
     });
   }
 }
