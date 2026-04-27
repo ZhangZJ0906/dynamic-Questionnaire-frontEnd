@@ -20,6 +20,41 @@ export interface Survey {
   responseCount?: number;
 }
 
+/** * 問卷回饋 API 完整回應結構
+ */
+export interface FeedbackResponse {
+  code: number;
+  message: string;
+  quizId: number;
+  feedBackVoList: FeedbackVo[];
+}
+
+/** * 單個填寫者的完整回答記錄
+ */
+export interface FeedbackVo {
+  fillinDate: string; // 後端 LocalDate 轉出的格式，如 "2026-04-24"
+  user: UserInfo;     // 填寫人基本資訊
+  answersVos: AnswerVo[]; // 該次填寫的所有問題答案清單
+}
+
+/** * 使用者資訊
+ */
+export interface UserInfo {
+  name: string;
+  email: string;
+  phone: string;
+  age: number;
+}
+
+/** * 單個問題的答案詳情
+ * 包含你剛剛在後端修正好的 questionTitle 欄位
+ */
+export interface AnswerVo {
+  questionId: number;
+  questionTitle: string; // 新增：題目文字
+  answerList: string[]; // 答案列表（支援單選與複選）
+}
+
 export interface QuizRequest {
   startDate: string;
   endDate: string;

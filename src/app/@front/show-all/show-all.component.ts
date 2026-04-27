@@ -14,7 +14,8 @@ import { MatIcon } from '@angular/material/icon';
 import { RouterLink } from '@angular/router';
 import { Survey } from './../../@interfaces/question';
 import { HttpClientService } from '../../@services/httpClient.service';
-import Swal from 'sweetalert2';
+import { SwalService } from '../../shared/SwalService';
+
 @Component({
   selector: 'app-show-all',
   imports: [
@@ -37,8 +38,8 @@ import Swal from 'sweetalert2';
 export class ShowAllComponent {
   inputData: string = '';
   quiz: Survey[] = [];
-  feedBackInfo: any ={};
-
+  feedBackInfo: any = {};
+  quizId: number[] = [];
   displayedColumns: string[] = [
     'id',
     'title',
@@ -52,7 +53,7 @@ export class ShowAllComponent {
   endDate: Date | null = null; // 新增：結束日期變數
   constructor(private http: HttpClientService) {
     this.getQuiz();
-    
+    this.isRepeat();
   }
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -96,13 +97,30 @@ export class ShowAllComponent {
   }
   // 確認是否重複填
   isRepeat() {
-    console.log(this.feedBackInfo)
-
     const data = localStorage.getItem('user');
 
-    if (data) {
-      const userData = JSON.parse(data);
+    if (!data) {
+      return;
     }
+    const userData = JSON.parse(data);
+    console.log(userData.email);
+    this.http
+      .getApi(this.http.basicUrl + `fillin/get_quiz_id?email=${userData.email}`)
+      .subscribe({
+        next: (res: any) => {
+          if (res.code === 200 && res.quizId) {
+            // 1. 清空舊資料（避免重複呼叫時資料累加）
+            this.quizId = [];
+            // 或者更優雅的做法：直接賦值
+            this.quizId = res.quizId;
+          } else {
+            SwalService.error('獲取失敗', res.message);
+          }
+        },
+        error: (err) => {
+          SwalService.error('獲取問卷ID失敗', err.message || '獲取問卷ID失敗');
+        },
+      });
   }
 
   // 統一觸發篩選的方法
@@ -128,11 +146,7 @@ export class ShowAllComponent {
       .subscribe({
         next: (res: any) => {
           if (res.code != 200) {
-            Swal.fire({
-              title: '獲取問卷失敗',
-              text: res.message || '獲取問卷失敗',
-              icon: 'error',
-            });
+            SwalService.error('獲取問卷失敗', res.message || '獲取問卷失敗');
             return;
           }
 
@@ -143,13 +157,18 @@ export class ShowAllComponent {
             const start = new Date(item.startDate);
             const end = new Date(item.endDate);
 
+            start.setHours(0, 0, 0, 0);
+            end.setHours(23, 59, 59, 999); // 結束日當天算到最後一刻
+
             let currentStatus: string = '';
             if (!item.published) {
               currentStatus = '未發佈';
+            } else if (now < start) {
+              currentStatus = '尚未開始'; // 當前時間早於開始日期
             } else if (now > end) {
-              currentStatus = '已結束';
+              currentStatus = '已結束'; // 當前時間晚於結束日期
             } else {
-              currentStatus = '進行中'; // 已發布（不管有沒有到開始日期）一律進行中
+              currentStatus = '進行中'; // 介於兩者之間
             }
 
             return {
@@ -163,7 +182,6 @@ export class ShowAllComponent {
 
           // 2. 更新類別屬性
           this.quiz = processedList;
-          
 
           // 3. 重要：必須把資料塞進 dataSource 畫面才會變更
           this.dataSource.data = this.quiz;
@@ -173,11 +191,7 @@ export class ShowAllComponent {
           this.dataSource.sort = this.sort;
         },
         error: (err) => {
-          Swal.fire({
-            title: '獲取問卷失敗',
-            text: err.message || '獲取問卷失敗',
-            icon: 'error',
-          });
+          SwalService.error('獲取問卷失敗', err.message || '獲取問卷失敗');
         },
       });
   }
@@ -186,8 +200,8 @@ export class ShowAllComponent {
     this.http
       .getApi(this.http.basicUrl + `fillin/feed_back?quizId=${quizId}`)
       .subscribe({
-        next: (value:any) => {
-          this.feedBackInfo=value;
+        next: (value: any) => {
+          this.feedBackInfo = value;
         },
       });
   }

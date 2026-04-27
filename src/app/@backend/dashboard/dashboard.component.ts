@@ -159,10 +159,12 @@ export class DashboardComponent {
             // 優先判斷是否「發佈」
 if (!item.published) {
   currentStatus = '未發佈';
+} else if (now < start) {
+  currentStatus = '未開始'; // 新增：尚未到達開始日期
 } else if (now > end) {
   currentStatus = '已結束';
 } else {
-  currentStatus = '進行中'; // 已發布（不管有沒有到開始日期）一律進行中
+  currentStatus = '進行中';
 }
             return {
               ...item,

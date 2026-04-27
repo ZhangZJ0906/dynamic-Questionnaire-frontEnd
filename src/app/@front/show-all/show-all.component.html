@@ -34,7 +34,8 @@
       <!-- ID Column -->
       <ng-container matColumnDef="id">
         <th mat-header-cell *matHeaderCellDef>No.</th>
-        <td mat-cell *matCellDef="let element; let i = index">{{ paginator.pageIndex * paginator.pageSize + i + 1 }}</td>
+        <td mat-cell *matCellDef="let element; let i = index">{{ paginator.pageIndex * paginator.pageSize + i + 1 }}
+        </td>
       </ng-container>
 
       <!-- 問卷名稱 Column -->
@@ -71,15 +72,22 @@
         <td mat-cell *matCellDef="let element">
           @switch (element.status) {
           @case ("進行中") {
-
-          <!-- TODO 這邊應該會先判斷是否填過 再去判斷要顯示哪個button -->
+          @if (quizId.includes(element.id)) {
+          <button mat-flat-button color="accent" class="whitespace-nowrap text-xs md:text-sm" disabled>查看結果</button>
+          } @else {
           <button mat-stroked-button color="primary" class="whitespace-nowrap text-xs md:text-sm"
             [routerLink]="['/showquestion', element.id]">填表單</button>
+          }
+          }
+
+          @case ("尚未開始") {
+          <button mat-stroked-button color="primary" class="whitespace-nowrap text-xs md:text-sm" disabled>填表單</button>
 
           }
+
           @case ("已結束") {
-          <button mat-flat-button color="primary" class="whitespace-nowrap text-xs md:text-sm"
-            [routerLink]="['/showquestion', element.id]" >查看結果</button>
+          <button mat-button color="basic" class="whitespace-nowrap text-xs md:text-sm"
+            [routerLink]="['/showChart', element.id]">查看結果</button>
           }
           }
         </td>
@@ -89,7 +97,7 @@
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
     </table>
 
-    <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons aria-label="Select page of periodic elements">
+    <mat-paginator [pageSizeOptions]="[ 10, 20]" showFirstLastButtons aria-label="Select page of periodic elements">
     </mat-paginator>
   </div>
 

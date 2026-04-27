@@ -1,3 +1,4 @@
+<app-sidebar>
 <div mat-dialog-title class="flex items-center justify-between !border-b !pb-4">
   <div class="flex items-center gap-2">
     <mat-icon class="text-primary-600">assignment_turned_in</mat-icon>
@@ -22,24 +23,24 @@
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-2">
-      <mat-form-field  class="w-full col-span-2">
+      <mat-form-field class="w-full col-span-2">
         <mat-label>問卷名稱</mat-label>
         <input matInput [value]="'2024 員工滿意度調查'" readonly />
         <mat-icon matSuffix class="opacity-50">title</mat-icon>
       </mat-form-field>
 
-      <mat-form-field  class="w-full col-span-2">
+      <mat-form-field class="w-full col-span-2">
         <mat-label>說明內容</mat-label>
         <textarea matInput rows="2" readonly>感謝您參與本次調查，您的寶貴意見將作為公司改善環境的重要參考。</textarea>
       </mat-form-field>
 
-      <mat-form-field  class="w-full">
+      <mat-form-field class="w-full">
         <mat-label>開始日期</mat-label>
         <input matInput [value]="'2024-01-01'" readonly />
         <mat-icon matSuffix class="opacity-50">calendar_today</mat-icon>
       </mat-form-field>
 
-      <mat-form-field  class="w-full">
+      <mat-form-field class="w-full">
         <mat-label>結束日期</mat-label>
         <input matInput [value]="'2024-01-31'" readonly />
         <mat-icon matSuffix class="opacity-50">event_busy</mat-icon>
@@ -99,3 +100,5 @@
   <button mat-button (click)="onNoClick()" class="!px-6">返回列表</button>
 
 </mat-dialog-actions>
+
+</app-sidebar>

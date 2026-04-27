@@ -1,4 +1,3 @@
-import { FeedBackComponent } from './feed-back/feed-back.component';
 import { Routes } from '@angular/router';
 
 export const frontRoutes: Routes = [
@@ -21,11 +20,11 @@ export const frontRoutes: Routes = [
         (m) => m.ShowQuestionComponent,
       ),
   },
-  {
-    path: 'showFeedBack/:quizId',
-    loadComponent: () =>
-      import('./feed-back/feed-back.component').then(
-        (m) => m.FeedBackComponent,
-      ),
-  },
+  // {
+  //   path: 'showFeedBack/:quizId',
+  //   loadComponent: () =>
+  //     import('./feed-back/feed-back.component').then(
+  //       (m) => m.FeedBackComponent,
+  //     ),
+  // },
 ];
