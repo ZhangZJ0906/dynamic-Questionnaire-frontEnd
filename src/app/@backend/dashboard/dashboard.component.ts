@@ -19,6 +19,7 @@ import { HttpClientService } from '../../@services/httpClient.service';
 import { Survey, UpdateQuestionRequest } from '../../@interfaces/question';
 import { EditDialogComponent } from '../edit-dialog/edit-dialog.component';
 import { Observable } from 'rxjs';
+import { SwalService } from '../../shared/SwalService';
 
 @Component({
   selector: 'app-dashboard',
@@ -135,15 +136,11 @@ export class DashboardComponent {
   //獲取 quiz 並不是 獲取 question
   getQuiz() {
     this.http
-      .getApi(this.http.basicUrl + 'quiz/get_quiz_list?isFrontEnd=0')
+      .getApi(this.http.basicUrl + 'quiz/get_quiz_list?isFrontEnd=1')
       .subscribe({
         next: (res: any) => {
           if (res.code != 200) {
-            Swal.fire({
-              title: '獲取問卷失敗',
-              text: res.message || '獲取問卷失敗',
-              icon: 'error',
-            });
+            SwalService.error('獲取問卷失敗', res.message || '獲取問卷失敗');
             return;
           }
 
@@ -154,21 +151,25 @@ export class DashboardComponent {
             const start = new Date(item.startDate);
             const end = new Date(item.endDate);
 
-            let currentStatus: string = '';
+            start.setHours(0, 0, 0, 0);
+            end.setHours(23, 59, 59, 999); // 結束日當天算到最後一刻
 
-            // 優先判斷是否「發佈」
-if (!item.published) {
-  currentStatus = '未發佈';
-} else if (now < start) {
-  currentStatus = '未開始'; // 新增：尚未到達開始日期
-} else if (now > end) {
-  currentStatus = '已結束';
-} else {
-  currentStatus = '進行中';
-}
+            let currentStatus: string = '';
+            if (!item.published) {
+              currentStatus = '未發佈';
+            } else if (now < start) {
+              currentStatus = '尚未開始'; // 當前時間早於開始日期
+            } else if (now > end) {
+              currentStatus = '已結束'; // 當前時間晚於結束日期
+            } else {
+              currentStatus = '進行中'; // 介於兩者之間
+            }
+
             return {
               ...item,
               status: currentStatus,
+              // 如果後端沒回傳數量，先給預設值 0
+              questionCount: res.quizList.length ?? 0,
               responseCount: item.responseCount ?? 0,
             };
           });
@@ -184,11 +185,7 @@ if (!item.published) {
           this.dataSource.sort = this.sort;
         },
         error: (err) => {
-          Swal.fire({
-            title: '獲取問卷失敗',
-            text: err.message || '獲取問卷失敗',
-            icon: 'error',
-          });
+          SwalService.error('獲取問卷失敗', err.message || '獲取問卷失敗');
         },
       });
   }
@@ -275,11 +272,10 @@ if (!item.published) {
 
   delete(id: number) {
     if (!id || id <= 0) {
-      Swal.fire({
-        title: 'ID 錯誤',
-        text: '找不到該問卷的編號，請重新整理頁面再試一次',
-        icon: 'error',
-      });
+      SwalService.error(
+        'ID 錯誤',
+        '找不到該問卷的編號，請重新整理頁面再試一次',
+      );
       return;
     }
     this.http
@@ -287,28 +283,36 @@ if (!item.published) {
       .subscribe({
         next: (res: any) => {
           if (res.code != 200) {
-            Swal.fire({
-              title: '刪除問卷失敗',
-              text: res.message || '獲取問卷失敗',
-              icon: 'error',
-            });
+            SwalService.error('刪除問卷失敗', res.message || '獲取問卷失敗');
             return;
           }
           this.getQuiz();
         },
         error: (err) => {
-          Swal.fire({
-            title: '刪除問卷失敗',
-            text: err.message || '獲取問卷失敗',
-            icon: 'error',
-          });
+          SwalService.error('刪除問卷失敗', err.message || '獲取問卷失敗');
         },
       });
   }
+  //GOTO　 feedback
   checkResult(element: any) {
-    const id = element.id;
-    console.log(id);
-    return this.route.navigate(['admin', 'question', 'chart', id]);
+    if (!element) {
+      SwalService.error('錯誤', '參數可能為空');
+      return;
+    }
+    this.route.navigate(['admin', 'feedback', element.id], {
+      state: { data: element },
+    });
+  }
+  //GOTO　 chart
+  chart(element: any) {
+    if (!element) {
+      SwalService.error('參數錯誤', '參數可能錯誤');
+      return;
+    }
+    // console.log(element)
+    this.route.navigate(['admin', 'chart', element.id], {
+      state: { data: element },
+    });
   }
   removequestionnaire(element: any) {
     const id = element.id;

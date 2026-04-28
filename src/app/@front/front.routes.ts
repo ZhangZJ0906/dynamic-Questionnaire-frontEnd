@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { userAuthGuard } from '../@services/auth.guard.service';
 
 export const frontRoutes: Routes = [
   {
@@ -10,21 +11,22 @@ export const frontRoutes: Routes = [
   //TODO後續要加入由首位
   {
     path: 'showAll',
+    canActivate: [userAuthGuard],
     loadComponent: () =>
       import('./show-all/show-all.component').then((m) => m.ShowAllComponent),
   },
   {
     path: 'showquestion/:quizId',
+    canActivate: [userAuthGuard],
     loadComponent: () =>
       import('./show-question/show-question.component').then(
         (m) => m.ShowQuestionComponent,
       ),
   },
-  // {
-  //   path: 'showFeedBack/:quizId',
-  //   loadComponent: () =>
-  //     import('./feed-back/feed-back.component').then(
-  //       (m) => m.FeedBackComponent,
-  //     ),
-  // },
+  {
+    path: 'chart/:id',
+    canActivate: [userAuthGuard],
+    loadComponent: () =>
+      import('../chart/chart.component').then((m) => m.ChartComponent),
+  },
 ];

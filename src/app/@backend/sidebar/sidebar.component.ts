@@ -5,6 +5,7 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../@services/auth.service';
+import { SwalService } from '../../shared/SwalService';
 
 export interface link {
   id: number;
@@ -29,22 +30,10 @@ export class SidebarComponent {
     },
     {
       id: 2,
-      name: '問卷',
-      route: 'question',
-      icon: 'account_circle',
-    },
-    {
-      id: 3,
       name: '前台首頁',
       route: '/showAll',
       icon: 'visibility',
     },
-    // {
-    //   id: 4,
-    //   name: '登出',
-    //   function: 'logout()',
-    //   icon: 'logout',
-    // },
   ];
 
   constructor(
@@ -52,17 +41,8 @@ export class SidebarComponent {
     private auth: AuthService,
   ) {}
 
-  // logout() {
-  //   TODO call API 登出 或是靠前端
-  //   Swal.fire({
-  //     title: '您以登出!',
-  //     text: '成功登出!',
-  //     icon: 'success',
-  //   });
-  //   this.router.navigate(['']);
-  // }
-
   logout() {
+    
     Swal.fire({
       title: '確定要登出？',
       icon: 'question',

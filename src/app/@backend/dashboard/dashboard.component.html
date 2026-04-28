@@ -99,10 +99,12 @@
             }
             @case ("進行中") {
             <button mat-stroked-button color="primary" (click)="checkResult(element)">查看結果</button>
+            <button mat-flat-button color="primary" (click)="chart(element)">統計結果</button>
+
 
             }
             @case ("已結束") {
-            <button mat-flat-button color="primary" (click)="checkResult(element)">統計結果</button>
+            <button mat-flat-button color="primary" (click)="chart(element)">統計結果</button>
             }
             }
             @if(!element.published){

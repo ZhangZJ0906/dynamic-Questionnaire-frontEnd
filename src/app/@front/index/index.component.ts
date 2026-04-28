@@ -18,6 +18,7 @@ import {
 } from '@angular/forms';
 import { AuthService } from '../../@services/auth.service';
 import { HttpClientService } from '../../@services/httpClient.service';
+import { SwalService } from '../../shared/SwalService';
 
 @Component({
   selector: 'app-index',
@@ -61,10 +62,7 @@ export class IndexComponent {
   signUp() {
     if (this.registerForm.invalid) {
       this.registerForm.markAllAsTouched(); // 讓沒填的欄位變紅
-      Swal.fire({
-        title: '請填寫正確資料',
-        icon: 'warning',
-      });
+      SwalService.warning('請填寫正確資料', '請填寫正確資料');
       return; // 直接中斷，不發送 API
     }
     const postData = {
@@ -80,25 +78,14 @@ export class IndexComponent {
         next: (res: any) => {
           // --- 關鍵修改：檢查後端定義的自定義狀態碼 ---
           if (res.code !== 200) {
-            Swal.fire({
-              title: '註冊失敗',
-              text: res.message || '帳號或密碼錯誤',
-              icon: 'error',
-            });
+            SwalService.error('註冊失敗', res.message || '帳號或密碼錯誤');
             return; // 擋掉，不執行後續登入邏輯
           }
-          Swal.fire({
-            title: '註冊成功',
-            icon: 'success',
-          });
+          SwalService.success('註冊成功', '註冊成功');
           this.registerForm.reset();
         },
         error: (err) => {
-          Swal.fire({
-            title: '註冊失敗',
-            text: err.error?.message || '伺服器連線異常',
-            icon: 'error',
-          });
+          SwalService.error('註冊失敗', err.message || '伺服器連線異常');
         },
       });
     this.test = !this.test;
@@ -108,10 +95,7 @@ export class IndexComponent {
   check() {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched(); // 讓沒填的欄位變紅
-      Swal.fire({
-        title: '請填寫正確資料',
-        icon: 'warning',
-      });
+      SwalService.warning('請填寫正確資料', '請填寫正確資料');
       return; // 直接中斷，不發送 API
     }
 
@@ -124,17 +108,11 @@ export class IndexComponent {
         next: (res: any) => {
           // --- 關鍵修改：檢查後端定義的自定義狀態碼 ---
           if (res.code !== 200) {
-            Swal.fire({
-              title: '登入失敗',
-              text: res.message || '帳號或密碼錯誤',
-              icon: 'error',
-            });
+            SwalService.error('登入失敗', res.message || '帳號或密碼錯誤');
             return; // 擋掉，不執行後續登入邏輯
           }
-          Swal.fire({
-            title: '登入成功',
-            icon: 'success',
-          });
+
+          SwalService.success('登入成功', '登入成功');
 
           const mockToken = 'session_' + Math.random().toString(36).substr(2);
           const authData = {
@@ -146,11 +124,7 @@ export class IndexComponent {
           this.auth.login(mockToken, authData);
         },
         error: (err) => {
-          Swal.fire({
-            title: '登入失敗',
-            text: err.error?.message || '伺服器連線異常',
-            icon: 'error',
-          });
+          SwalService.error('登入失敗', err.message || '伺服器連線異常');
 
           this.router.navigate(['/']);
         },

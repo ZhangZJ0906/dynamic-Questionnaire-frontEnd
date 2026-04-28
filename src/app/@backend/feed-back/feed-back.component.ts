@@ -1,7 +1,7 @@
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
 
-import { Component, ViewChild } from '@angular/core';
+import { Component, Inject, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
@@ -48,7 +48,8 @@ import { ShowResultDialogComponent } from '../show-result-dialog/show-result-dia
 export class FeedBackComponent {
   inputData: string = '';
   feedBack: FeedbackVo[] = [];
-  quizId: string | null = null;
+  quizId: number | null = null;
+  receivedData: any;
   displayedColumns: string[] = ['name', 'email', 'fillinDate', 'actions'];
   dataSource = new MatTableDataSource<FeedbackVo>(this.feedBack);
   startDate: Date | null = null; // 新增：開始日期變數
@@ -57,8 +58,11 @@ export class FeedBackComponent {
     private dialog: MatDialog,
     private http: HttpClientService,
     private route: ActivatedRoute,
+    private router: Router,
   ) {
-    this.quizId = this.route.snapshot.paramMap.get('quizId');
+    const navigation = this.router.getCurrentNavigation();
+    this.receivedData = navigation?.extras.state?.['data'];
+    this.quizId=this.receivedData.id;
     this.getFeedBack(this.quizId);
   }
   @ViewChild(MatPaginator) paginator!: MatPaginator;
@@ -127,10 +131,14 @@ export class FeedBackComponent {
   }
   //dialog
   openDialog(element: any): void {
+    const postData ={
+      ...element,
+      quizId:this.quizId,
+    }
     const dialogRef = this.dialog.open(ShowResultDialogComponent, {
       width: '560px',
       height: '560px',
-      data: element,
+      data: postData,
       disableClose: false,
     });
   }

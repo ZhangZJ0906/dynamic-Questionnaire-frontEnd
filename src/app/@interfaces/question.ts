@@ -15,7 +15,7 @@ export interface Survey {
   endDate: string;
   published: boolean;
   // 以下為前端表格顯示需要的擴充欄位，設為選填
-  
+
   status?: string;
   responseCount?: number;
 }
@@ -33,7 +33,7 @@ export interface FeedbackResponse {
  */
 export interface FeedbackVo {
   fillinDate: string; // 後端 LocalDate 轉出的格式，如 "2026-04-24"
-  user: UserInfo;     // 填寫人基本資訊
+  user: UserInfo; // 填寫人基本資訊
   answersVos: AnswerVo[]; // 該次填寫的所有問題答案清單
 }
 
@@ -78,6 +78,12 @@ export interface UpdateQuestionRequest {
   question: string; // 對應後端的 question (原 label)
   type: 'TEXT' | 'SINGLE' | 'MUTI'; // 對應後端的 type (原 questionType)
   required: boolean; // 是否必填
-  optionsList?: string[]|null; // 對應後端的 optionsList (原 option)
+  optionsList?: string[] | null; // 對應後端的 optionsList (原 option)
   answerValue?: string | string[];
+}
+
+export interface user {
+  name: string;
+  content: string;
+  attendance: number;
 }

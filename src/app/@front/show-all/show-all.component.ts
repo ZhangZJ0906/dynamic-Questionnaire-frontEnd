@@ -1,7 +1,6 @@
 import { NavComponent } from '../nav/nav.component';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { provideNativeDateAdapter } from '@angular/material/core';
-
 import { Component, ViewChild } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
@@ -11,7 +10,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSort, MatSortModule } from '@angular/material/sort';
 import { MatButton } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Survey } from './../../@interfaces/question';
 import { HttpClientService } from '../../@services/httpClient.service';
 import { SwalService } from '../../shared/SwalService';
@@ -51,7 +50,10 @@ export class ShowAllComponent {
   dataSource = new MatTableDataSource<Survey>(this.quiz);
   startDate: Date | null = null; // 新增：開始日期變數
   endDate: Date | null = null; // 新增：結束日期變數
-  constructor(private http: HttpClientService) {
+  constructor(
+    private http: HttpClientService,
+    private route: Router,
+  ) {
     this.getQuiz();
     this.isRepeat();
   }
@@ -204,5 +206,16 @@ export class ShowAllComponent {
           this.feedBackInfo = value;
         },
       });
+  }
+
+  chart(element: any) {
+    if (!element) {
+      SwalService.error('參數錯誤', '參數可能錯誤');
+      return;
+    }
+    console.log(element);
+    this.route.navigate([ 'chart', element.id], {
+      state: { data: element },
+    });
   }
 }
