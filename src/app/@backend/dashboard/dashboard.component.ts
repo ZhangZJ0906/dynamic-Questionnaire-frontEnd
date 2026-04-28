@@ -57,7 +57,7 @@ export class DashboardComponent {
     'startDate',
     'endDate',
     'status',
-    'responseCount',
+    
     'actions',
   ];
   dataSource = new MatTableDataSource<Survey>(this.quiz);
@@ -136,7 +136,7 @@ export class DashboardComponent {
   //獲取 quiz 並不是 獲取 question
   getQuiz() {
     this.http
-      .getApi(this.http.basicUrl + 'quiz/get_quiz_list?isFrontEnd=1')
+      .getApi(this.http.basicUrl + 'quiz/get_quiz_list?isFrontEnd=0')
       .subscribe({
         next: (res: any) => {
           if (res.code != 200) {
