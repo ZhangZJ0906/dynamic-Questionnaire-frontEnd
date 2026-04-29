@@ -81,12 +81,12 @@ export class IndexComponent {
           }
           SwalService.success('註冊成功', '註冊成功');
           this.registerForm.reset();
+          this.test = !this.test;
         },
         error: (err) => {
           SwalService.error('註冊失敗', err.message || '伺服器連線異常');
         },
       });
-    this.test = !this.test;
   }
 
   //登入
