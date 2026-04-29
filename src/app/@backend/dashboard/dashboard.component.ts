@@ -309,7 +309,7 @@ export class DashboardComponent {
       SwalService.error('參數錯誤', '參數可能錯誤');
       return;
     }
-    // console.log(element)
+    
     this.route.navigate(['admin', 'chart', element.id], {
       state: { data: element },
     });

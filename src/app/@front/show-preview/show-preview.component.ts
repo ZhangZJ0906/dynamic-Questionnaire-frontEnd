@@ -1,12 +1,5 @@
 import Swal from 'sweetalert2';
-import {
-  ChangeDetectionStrategy,
-  Component,
-  Inject,
-  inject,
-  model,
-  signal,
-} from '@angular/core';
+import { Component, Inject, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import {
@@ -24,6 +17,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatDividerModule } from '@angular/material/divider';
 import { Router } from '@angular/router';
 import { HttpClientService } from '../../@services/httpClient.service';
+import { SwalService } from '../../shared/SwalService';
 
 @Component({
   selector: 'app-show-preview',
@@ -51,9 +45,7 @@ export class ShowPreviewComponent {
     private http: HttpClientService,
     @Inject(MAT_DIALOG_DATA)
     public data: { question: any[]; answer: any; userInfo: any },
-  ) {
-    console.log(this.data.question);
-  }
+  ) {}
 
   onCancel() {
     this.dialogRef.close();
@@ -91,40 +83,33 @@ export class ShowPreviewComponent {
       email: this.data.userInfo.email,
       quizId: this.data.question[0].quizId,
     };
-    
+
     // @Inject(MAT_DIALOG_DATA) public data: { question: any[]; answer: any ,userInfo:any},
     this.http
       .postApi(this.http.basicUrl + 'fillin/fillin_answer', postData)
       .subscribe({
         next: (res: any) => {
           if (res.code != 200) {
-            Swal.fire({
-              title: '填答失敗',
-              text: res.message || '參數錯誤或是伺服器錯誤',
-              icon: 'error',
-            });
+            SwalService.error(
+              '填答失敗',
+              res.message || '參數錯誤或是伺服器錯誤',
+            );
+
             return;
           }
-          Swal.fire({
-            title: '送出成功',
-            text: '成功',
-            icon: 'success',
-          });
+          SwalService.success('送出成功', 'success');
           this.dialogRef.close(true);
           this.router.navigate(['/showAll']);
         },
         error: (err) => {
-          Swal.fire({
-            title: '填答失敗',
-            text: err.message || '參數錯誤或是伺服器錯誤',
-            icon: 'error',
-          });
+          SwalService.error(
+            '填答失敗',
+            err.message || '參數錯誤或是伺服器錯誤',
+          );
         },
       });
   }
   submit() {
-    //TODO call API 送資料
-
     Swal.fire({
       title: '確定要送出？',
       text: '確定不再檢查一次嗎？', // 修正這裡：context -> text

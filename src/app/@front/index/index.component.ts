@@ -1,6 +1,4 @@
 import { Component } from '@angular/core';
-import Swal from 'sweetalert2';
-
 import { NavComponent } from '../nav/nav.component';
 import { MatInputModule } from '@angular/material/input';
 import { MatFormFieldModule } from '@angular/material/form-field';

@@ -2,9 +2,7 @@ import {
   UpdateQuestionRequest,
   UpdateQuizRequest,
 } from './../../@interfaces/question';
-import Swal from 'sweetalert2';
-
-import { Component, Output, EventEmitter, Inject } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
@@ -29,6 +27,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatOption } from '@angular/material/core';
 import { HttpClientService } from '../../@services/httpClient.service';
 import { Utils } from '../../shared/utils';
+import { SwalService } from '../../shared/SwalService';
 @Component({
   selector: 'app-edit-dialog',
   imports: [
@@ -55,6 +54,8 @@ import { Utils } from '../../shared/utils';
 })
 export class EditDialogComponent {
   basicInfo!: UpdateQuizRequest;
+  question: UpdateQuestionRequest[] = [];
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: any,
     private dialogRef: MatDialogRef<EditDialogComponent>,
@@ -67,9 +68,6 @@ export class EditDialogComponent {
     this.getQuestion(this.basicInfo.id);
   }
 
-  // quiz:
-  question: UpdateQuestionRequest[] = [];
-
   onclose() {
     this.dialogRef.close();
   }
@@ -80,22 +78,13 @@ export class EditDialogComponent {
       .subscribe({
         next: (res: any) => {
           if (res.code != 200) {
-            Swal.fire({
-              title: '獲取問題失敗',
-              text: res.message || '獲取問題失敗',
-              icon: 'error',
-            });
+            SwalService.error('獲取問題失敗', res.message || '獲取問題失敗');
             return;
           }
-          console.log(res);
           this.question = res.questionVos;
         },
         error: (err) => {
-          Swal.fire({
-            title: '獲取問題失敗',
-            text: err.message || '獲取問題失敗',
-            icon: 'error',
-          });
+          SwalService.error('獲取問題失敗', err.message || '獲取問題失敗');
         },
       });
   }
@@ -114,7 +103,6 @@ export class EditDialogComponent {
       optionsList: null, // 原為 option
       answerValue: '',
     };
-    // console.log(this.question);
 
     this.question.push(newQuestion);
   }
@@ -184,32 +172,20 @@ export class EditDialogComponent {
     if (!Utils.validateData(postData)) {
       return;
     }
-    console.table(postData.questionVoList);
+
     this.http.postApi(this.http.basicUrl + 'quiz/update', postData).subscribe({
       next: (res: any) => {
         // --- 關鍵修改：檢查後端定義的自定義狀態碼 ---
         if (res.code !== 200) {
-          Swal.fire({
-            title: '新增失敗',
-            text: res.message || '參數錯誤',
-            icon: 'error',
-          });
+          SwalService.error('新增失敗', res.message || '參數錯誤');
           return; // 擋掉，不執行後續登入邏輯
         }
-        Swal.fire({
-          title: '新增成功',
-          icon: 'success',
-        });
-
+        SwalService.success('新增成功', 'success');
         // 關閉 dialog 並回傳資料
         this.dialogRef.close(true);
       },
       error: (err) => {
-        Swal.fire({
-          title: '新增失敗',
-          text: err.error?.message || '伺服器連線異常',
-          icon: 'error',
-        });
+        SwalService.error('新增失敗', err.error?.message || '伺服器連線異常');
       },
     });
   }

@@ -29,7 +29,7 @@ export class ChartComponent {
   }
 
   getData(id: number) {
-    // console.log(this.receivedData);
+    
 
     this.http
       .getApi(this.http.basicUrl + `fillin/statistics?quizId=${id}`)

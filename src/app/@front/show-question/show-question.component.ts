@@ -25,8 +25,8 @@ import {
 import { ShowPreviewComponent } from '../show-preview/show-preview.component';
 import { HttpClientService } from '../../@services/httpClient.service';
 import { ActivatedRoute } from '@angular/router';
-import Swal from 'sweetalert2';
 import { QuizRequest, UpdateQuestionRequest } from '../../@interfaces/question';
+import { SwalService } from '../../shared/SwalService';
 
 export interface questions {}
 @Component({
@@ -62,7 +62,6 @@ export class ShowQuestionComponent {
   ) {
     // 從路由快照中取得 quizId 參數 (名稱要跟 frontRoutes 定義的一樣)
     this.quizId = this.route.snapshot.paramMap.get('quizId');
-    this.getFeedBack(this.quizId);
     this.initUserData();
     this.getQuestion(this.quizId);
   }
@@ -83,20 +82,15 @@ export class ShowQuestionComponent {
         // 自動填入 answers 物件中，這樣 HTML 就會顯示
       }
     } catch (e: any) {
-      Swal.fire({
-        title: '解析 user 資料失敗',
-        text: e.message || '解析 user 資料失敗',
-        icon: 'error',
-      });
+      SwalService.error(
+        '解析 user 資料失敗',
+        e.message || '解析 user 資料失敗',
+      );
     }
   }
   getQuiz(id: number) {
     if (id == null || id <= 0) {
-      Swal.fire({
-        title: 'Id 參數錯誤',
-        text: '找不到該問卷或是Id 參數錯誤',
-        icon: 'error',
-      });
+      SwalService.error('Id 參數錯誤', '找不到該問卷或是Id 參數錯誤');
       return;
     }
     this.http
@@ -104,22 +98,14 @@ export class ShowQuestionComponent {
       .subscribe({
         next: (res: any) => {
           if (res.code != 200) {
-            Swal.fire({
-              title: '獲取問卷失敗',
-              text: res.message || '獲取問卷失敗',
-              icon: 'error',
-            });
+            SwalService.error('獲取問卷失敗', res.message || '獲取問卷失敗');
             return;
           }
 
           this.quiz = res.quizList;
         },
         error: (err) => {
-          Swal.fire({
-            title: '獲取問卷失敗',
-            text: err.message || '獲取問卷失敗',
-            icon: 'error',
-          });
+          SwalService.error('獲取問卷失敗', err.message || '獲取問卷失敗');
         },
       });
   }
@@ -127,11 +113,7 @@ export class ShowQuestionComponent {
     const id = parseInt(quizId);
     this.getQuiz(id);
     if (id == null || id <= 0) {
-      Swal.fire({
-        title: 'Id 參數錯誤',
-        text: '找不到該問卷或是Id 參數錯誤',
-        icon: 'error',
-      });
+      SwalService.error('Id 參數錯誤', '找不到該問卷或是Id 參數錯誤');
       return;
     }
     this.http
@@ -139,22 +121,14 @@ export class ShowQuestionComponent {
       .subscribe({
         next: (res: any) => {
           if (res.code != 200) {
-            Swal.fire({
-              title: '獲取問題失敗',
-              text: res.message || '獲取問題失敗',
-              icon: 'error',
-            });
+            SwalService.error('獲取問題失敗', res.message || '獲取問題失敗');
             return;
           }
 
           this.question = res.questionVos;
         },
         error: (err) => {
-          Swal.fire({
-            title: '獲取問題失敗',
-            text: err.message || '獲取問題失敗',
-            icon: 'error',
-          });
+          SwalService.error('獲取問題失敗', err.message || '獲取問題失敗');
         },
       });
   }
@@ -208,11 +182,10 @@ export class ShowQuestionComponent {
     });
 
     if (missingQuestions.length > 0) {
-      Swal.fire({
-        title: '尚未完成',
-        text: `還有 ${missingQuestions.length} 個必填項目未填寫！`,
-        icon: 'warning',
-      });
+      SwalService.warning(
+        '尚未完成',
+        `還有 ${missingQuestions.length} 個必填項目未填寫！`,
+      );
       return; // 攔截，不開啟預覽
     }
     this.matdialog.open(ShowPreviewComponent, {
@@ -224,15 +197,5 @@ export class ShowQuestionComponent {
         userInfo: this.userInfo,
       },
     });
-  }
-
-  getFeedBack(quizId: any) {
-    this.http
-      .getApi(this.http.basicUrl + `fillin/feed_back?quizId=${quizId}`)
-      .subscribe({
-        next: (value) => {
-          console.log(value);
-        },
-      });
   }
 }

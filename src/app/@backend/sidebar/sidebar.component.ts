@@ -5,7 +5,6 @@ import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../@services/auth.service';
-import { SwalService } from '../../shared/SwalService';
 
 export interface link {
   id: number;

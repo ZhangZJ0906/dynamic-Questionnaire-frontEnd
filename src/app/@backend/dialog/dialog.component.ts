@@ -1,7 +1,5 @@
 import { Question, QuizRequest } from './../../@interfaces/question';
-import Swal from 'sweetalert2';
-
-import { Component, Output, EventEmitter } from '@angular/core';
+import { Component } from '@angular/core';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { FormsModule } from '@angular/forms';
@@ -26,6 +24,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { MatOption } from '@angular/material/core';
 import { HttpClientService } from '../../@services/httpClient.service';
 import { Utils } from '../../shared/utils';
+import { SwalService } from '../../shared/SwalService';
 @Component({
   selector: 'app-dialog',
   imports: [
@@ -135,31 +134,18 @@ export class DialogComponent {
 
     this.http.postApi(this.http.basicUrl + 'quiz/create', postData).subscribe({
       next: (res: any) => {
-        console.log(res);
-        console.log('post Data    ' + postData);
         // --- 關鍵修改：檢查後端定義的自定義狀態碼 ---
         if (res.code !== 200) {
-          Swal.fire({
-            title: '新增失敗',
-            text: res.message || '參數錯誤',
-            icon: 'error',
-          });
+          SwalService.error('新增失敗', res.message || '參數錯誤');
+
           return; // 擋掉，不執行後續登入邏輯
         }
-        Swal.fire({
-          title: '新增成功',
-          icon: 'success',
-        });
-
+        SwalService.success("新增成功","success")
         // 關閉 dialog 並回傳資料
         this.dialogRef.close(true);
       },
       error: (err) => {
-        Swal.fire({
-          title: '新增失敗',
-          text: err.error?.message || '伺服器連線異常',
-          icon: 'error',
-        });
+          SwalService.error('新增失敗', err.error?.message || '伺服器連線異常');
       },
     });
   }

@@ -49,7 +49,7 @@ export class ShowResultDialogComponent {
     this.getQuiz(this.readOnlyAnswer.quizId)
     
     
-    console.log(this.readOnlyAnswer);
+    
   }
   readonly dialogRef = inject(MatDialogRef<ShowResultDialogComponent>);
 
@@ -71,7 +71,7 @@ export class ShowResultDialogComponent {
           }
 
           this.quiz = res.quizList;
-          console.log(this.quiz)
+          
         },
         error: (err) => {
           SwalService.error('獲取問卷失敗', err.message || '獲取問卷失敗');

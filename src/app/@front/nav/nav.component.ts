@@ -22,7 +22,7 @@ import Swal from 'sweetalert2';
 export class NavComponent {
   menuOpen = false; // 控制手機下拉
   constructor(private auth: AuthService) {}
-  //TODO 登出
+  
   logout() {
     Swal.fire({
       title: '確定要登出？',

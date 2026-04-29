@@ -89,6 +89,10 @@
             @case("未發布"){
             <button mat-stroked-button color="primary" (click)="editQuiz(element)">編輯問題</button>
             }
+            @case("尚未開始"){
+            <button mat-stroked-button color="primary" (click)="editQuiz(element)">編輯問題</button>
+
+            }
             @case ("進行中") {
             <button mat-stroked-button color="primary" (click)="checkResult(element)">查看結果</button>
             <button mat-flat-button color="primary" (click)="chart(element)">統計結果</button>

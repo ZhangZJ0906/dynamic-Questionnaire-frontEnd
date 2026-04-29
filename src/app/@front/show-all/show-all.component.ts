@@ -105,7 +105,7 @@ export class ShowAllComponent {
       return;
     }
     const userData = JSON.parse(data);
-    console.log(userData.email);
+    
     this.http
       .getApi(this.http.basicUrl + `fillin/get_quiz_id?email=${userData.email}`)
       .subscribe({
@@ -213,7 +213,7 @@ export class ShowAllComponent {
       SwalService.error('參數錯誤', '參數可能錯誤');
       return;
     }
-    console.log(element);
+    
     this.route.navigate([ 'chart', element.id], {
       state: { data: element },
     });
