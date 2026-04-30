@@ -59,3 +59,25 @@ export const userAuthGuard: CanActivateFn = (route, state) => {
     return false;
   }
 };
+
+
+// 前台 以登入不能返回登入頁面
+export const loginAuthGuard: CanActivateFn = (route, state) => {
+  const router = inject(Router);
+
+  // 取得使用者資訊
+  const userJson = localStorage.getItem('user');
+  const userEmail = userJson
+    ? JSON.parse(userJson).email
+    : localStorage.getItem('email');
+
+  // 如果已經有 email (已登入)
+  if (userEmail) {
+    // 攔截他，不讓他去登入頁，直接送他去首頁或列表頁
+    router.navigate(['/showAll']);
+    return false; // 注意：這裡要回傳 false，因為我們要「阻止」他進入登入頁
+  }
+
+  // 沒有 email (未登入)，允許進入登入頁面
+  return true;
+};;

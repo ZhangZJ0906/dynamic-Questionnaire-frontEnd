@@ -1,14 +1,15 @@
 import { Routes } from '@angular/router';
-import { userAuthGuard } from '../@services/auth.guard.service';
+import { loginAuthGuard, userAuthGuard } from '../@services/auth.guard.service';
 
 export const frontRoutes: Routes = [
   {
     path: '',
+    canActivate:[loginAuthGuard],
     loadComponent: () =>
       import('./index/index.component').then((m) => m.IndexComponent),
   },
 
-  //TODO後續要加入由首位
+  
   {
     path: 'showAll',
     canActivate: [userAuthGuard],
