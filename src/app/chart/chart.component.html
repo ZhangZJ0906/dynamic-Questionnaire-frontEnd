@@ -1,7 +1,11 @@
 <app-nav></app-nav>
 
 <div class="flex flex-wrap gap-10 p-10 justify-center">
-  @for (item of statisticsData; track item.questionId; let i = $index) {
+  @if(statisticsData.length<=0){
+    <h1 class="text-center font-bold text-5xl mb-4">尚未有人填寫此表單!!!!!!!!!!!!</h1>
+
+  }@else {
+      @for (item of statisticsData; track item.questionId; let i = $index) {
   <div class="w-80 p-4 border rounded-lg shadow-sm bg-white">
     <h3 class="text-center font-bold mb-4">{{ item.questionTitle }}</h3>
     <div class="relative h-64">
@@ -9,4 +13,6 @@
     </div>
   </div>
   }
+  }
+
 </div>
