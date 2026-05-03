@@ -87,3 +87,12 @@ export interface user {
   content: string;
   attendance: number;
 }
+
+//side ｂａｒ 專用
+export interface link {
+  id: number;
+  name: string;
+  route?: string;
+  icon: string;
+  function?: string;
+}

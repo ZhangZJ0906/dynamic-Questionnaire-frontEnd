@@ -3,16 +3,10 @@ import Swal from 'sweetalert2';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSidenavModule } from '@angular/material/sidenav';
 import { MatIconModule } from '@angular/material/icon';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { AuthService } from '../../@services/auth.service';
+import { link } from '../../@interfaces/question';
 
-export interface link {
-  id: number;
-  name: string;
-  route?: string;
-  icon: string;
-  function?: string;
-}
 @Component({
   selector: 'app-sidebar',
   imports: [MatSidenavModule, MatButtonModule, MatIconModule, RouterLink],
@@ -35,13 +29,9 @@ export class SidebarComponent {
     },
   ];
 
-  constructor(
-    private router: Router,
-    private auth: AuthService,
-  ) {}
+  constructor(private auth: AuthService) {}
 
   logout() {
-    
     Swal.fire({
       title: '確定要登出？',
       icon: 'question',

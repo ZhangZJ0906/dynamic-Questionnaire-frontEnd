@@ -26,6 +26,7 @@ import { FeedbackVo, Survey } from './../../@interfaces/question';
 import { HttpClientService } from '../../@services/httpClient.service';
 import { SwalService } from '../../shared/SwalService';
 import { ShowResultDialogComponent } from '../show-result-dialog/show-result-dialog.component';
+import { SidebarComponent } from "../sidebar/sidebar.component";
 
 @Component({
   selector: 'app-feed-back',
@@ -40,7 +41,8 @@ import { ShowResultDialogComponent } from '../show-result-dialog/show-result-dia
     MatIcon,
     RouterLink,
     MatDatepickerModule,
-  ],
+    SidebarComponent
+],
   providers: [provideNativeDateAdapter()],
   templateUrl: './feed-back.component.html',
   styleUrl: './feed-back.component.scss',
